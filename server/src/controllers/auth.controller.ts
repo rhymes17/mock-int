@@ -10,7 +10,6 @@ const FRONTEND_URL = "http://localhost:3000";
 
 const oAuthLogin = asyncHandler((req: Request, res: Response) => {
   const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
-  const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
   const scope = [
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/userinfo.profile",
@@ -66,6 +65,12 @@ const oAuthCallback = asyncHandler(async (req: Request, res: Response) => {
         avatar: picture,
         accessToken: access_token,
         refreshToken: refresh_token,
+        profile: {
+          totalYoe: 0,
+          skills: [],
+          linkedInUrl: "",
+          bio: "",
+        },
       });
     } else {
       user.accessToken = access_token;
@@ -83,7 +88,7 @@ const oAuthCallback = asyncHandler(async (req: Request, res: Response) => {
     // Set cookie
     res.cookie("token", jwtToken, {
       httpOnly: true,
-      secure: true, // set true in production
+      secure: true,
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

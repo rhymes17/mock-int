@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import User from "../Models/User";
+import User, { UserType } from "../Models/User";
 import { asyncHandler } from "../utils/asyncHandler";
 
 interface DecodedToken extends JwtPayload {
@@ -22,7 +22,9 @@ export const protectedRoute = asyncHandler(
         process.env.JWT_SECRET!
       ) as DecodedToken;
 
-      const user = await User.findById(decoded.id).select("-password");
+      const user: UserType = await User.findById(decoded.id).select(
+        "-password"
+      );
       if (!user) {
         res.status(404);
         throw new Error("User not found!");
