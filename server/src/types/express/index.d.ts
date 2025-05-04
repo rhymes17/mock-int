@@ -1,7 +1,9 @@
-import { UserDocument } from "../../Models/User";
+import { UserType } from "../../Models/User";
 
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: UserDocument;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: UserType;
+    }
   }
 }
