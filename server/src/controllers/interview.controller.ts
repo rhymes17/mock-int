@@ -379,7 +379,7 @@ const applyToBroadcastedInterview = asyncHandler(
       throw new Error("Interview request not found!");
     }
 
-    if (user.id === broadcastedInterviewDoc.interviewer.id) {
+    if (user.id === broadcastedInterviewDoc.interviewer.toString()) {
       res.status(403);
       throw new Error("Interviewer cannot apply for an interview");
     }
@@ -479,7 +479,7 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
 );
 
 // @desc   Schedule a broadcasted interview request
-// @route  POST /api/interview/request/broadcasted/:interviewRequestId
+// @route  POST /api/interview/request/broadcasted/accept/:interviewRequestId
 // @access Private
 const acceptBroadcastedInterviewRequest = asyncHandler(
   async (req: Request, res: Response) => {
@@ -499,13 +499,18 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
 
     const { intervieweeId } = req.body;
 
+    if (!intervieweeId) {
+      res.status(404);
+      throw new Error("Interviewee must be choosen");
+    }
+
     const interviewRequest = await BroadcastedInterviewRequest.findOne({
       $and: [
         {
           $or: [{ interviewee: user._id }, { interviewer: user._id }],
         },
         {
-          id: interivewRequestId,
+          _id: interivewRequestId,
         },
       ],
     });
@@ -515,7 +520,7 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
       throw new Error("Interview request not found or inaccessible");
     }
 
-    if (user.id !== interviewRequest.interviewer) {
+    if (user.id !== interviewRequest.interviewer.toString()) {
       res.status(403);
       throw new Error("Only author can perform this operation");
     }
@@ -543,6 +548,10 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
       interviewer,
       interviewLink: meetLink,
     });
+
+    interviewRequest.isAccepted = true;
+
+    await interviewRequest.save();
 
     res.status(200).json({
       success: true,

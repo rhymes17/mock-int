@@ -75,7 +75,7 @@ router.post(
 );
 
 router.post(
-  "/request/broadcasted/:interviewRequestId",
+  "/request/broadcasted/accept/:interivewRequestId",
   protectedRoute,
   acceptBroadcastedInterviewRequest
 );
