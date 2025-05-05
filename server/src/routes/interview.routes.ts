@@ -11,8 +11,11 @@ import {
   getPeerToPeerInterviewReceivedRequests,
   getPeerToPeerInterviewRequest,
   getPeerToPeerInterviewSentRequests,
+  rejectPeerToPeerInterviewRequest,
   requestBroadcastedInterview,
   requestPeerToPeerInterview,
+  withdrawBroadcastedInterviewRequest,
+  withdrawPeerToPeerInterviewRequest,
 } from "../controllers/interview.controller";
 import { protectedRoute } from "../middlewares/protectedRoutes";
 
@@ -31,7 +34,7 @@ router.get(
   getPeerToPeerInterviewSentRequests
 );
 router.get(
-  "/request/peer-to-peer/:interivewRequestId",
+  "/request/peer-to-peer/:interviewRequestId",
   protectedRoute,
   getPeerToPeerInterviewRequest
 );
@@ -52,7 +55,7 @@ router.get(
   getBroadcastedInterviewSentRequests
 );
 router.get(
-  "/request/broadcasted/:interivewRequestId",
+  "/request/broadcasted/:interviewRequestId",
   protectedRoute,
   getBroadcastedInterviewRequest
 );
@@ -75,9 +78,27 @@ router.post(
 );
 
 router.post(
-  "/request/broadcasted/accept/:interivewRequestId",
+  "/request/broadcasted/accept/:interviewRequestId",
   protectedRoute,
   acceptBroadcastedInterviewRequest
+);
+
+router.put(
+  "/request/peer-to-peer/reject/:interviewRequestId",
+  protectedRoute,
+  rejectPeerToPeerInterviewRequest
+);
+
+router.put(
+  "/request/peer-to-peer/withdraw/:interviewRequestId",
+  protectedRoute,
+  withdrawPeerToPeerInterviewRequest
+);
+
+router.put(
+  "/request/broadcasted/withdraw/:interviewRequestId",
+  protectedRoute,
+  withdrawBroadcastedInterviewRequest
 );
 
 export default router;

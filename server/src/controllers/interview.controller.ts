@@ -110,7 +110,7 @@ const getPeerToPeerInterviewSentRequests = asyncHandler(
 );
 
 // @desc   Get a peer-to-peer interview request
-// @route  GET /api/interview/request/peer-to-peer/:interivewRequestId
+// @route  GET /api/interview/request/peer-to-peer/:interviewRequestId
 // @access Private
 const getPeerToPeerInterviewRequest = asyncHandler(
   async (req: Request, res: Response) => {
@@ -121,9 +121,9 @@ const getPeerToPeerInterviewRequest = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const interivewRequestId = req.params.interivewRequestId;
+    const interviewRequestId = req.params.interviewRequestId;
 
-    if (!interivewRequestId) {
+    if (!interviewRequestId) {
       res.status(403);
       throw new Error("No interview id found!");
     }
@@ -134,7 +134,7 @@ const getPeerToPeerInterviewRequest = asyncHandler(
           $or: [{ interviewee: user._id }, { interviewer: user._id }],
         },
         {
-          _id: interivewRequestId,
+          _id: interviewRequestId,
         },
       ],
     });
@@ -190,6 +190,15 @@ const requestPeerToPeerInterview = asyncHandler(
 
     if (!requestType) {
       throw new Error("Request type not defined!");
+    }
+
+    if (!role) {
+      throw new Error("Role must be defined!");
+    }
+
+    if (new Date(time) <= new Date()) {
+      res.status(400);
+      throw new Error("Interview time must be in the future");
     }
 
     let peerToPeerInterviewRequest: IPeerToPeerInterviewRequest = {
@@ -276,7 +285,7 @@ const getBroadcastedInterviewSentRequests = asyncHandler(
 );
 
 // @desc   Get a broadcasted interview request
-// @route  GET /api/interview/request/broadcasted/:interivewRequestId
+// @route  GET /api/interview/request/broadcasted/:interviewRequestId
 // @access Private
 const getBroadcastedInterviewRequest = asyncHandler(
   async (req: Request, res: Response) => {
@@ -287,15 +296,15 @@ const getBroadcastedInterviewRequest = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const interivewRequestId = req.params.interivewRequestId;
+    const interviewRequestId = req.params.interviewRequestId;
 
-    if (!interivewRequestId) {
+    if (!interviewRequestId) {
       res.status(403);
       throw new Error("No interview id found!");
     }
 
     const interviewRequest = await BroadcastedInterviewRequest.findById(
-      interivewRequestId
+      interviewRequestId
     );
 
     if (!interviewRequest) {
@@ -330,6 +339,15 @@ const requestBroadcastedInterview = asyncHandler(
       role: string;
       time: Date;
     } = req.body;
+
+    if (new Date(time) <= new Date()) {
+      res.status(400);
+      throw new Error("Interview time must be in the future");
+    }
+
+    if (!role) {
+      throw new Error("Role must be defined!");
+    }
 
     let broadcastedInterviewRequest: IBroadcastedInterviewRequest = {
       role,
@@ -384,6 +402,11 @@ const applyToBroadcastedInterview = asyncHandler(
       throw new Error("Interviewer cannot apply for an interview");
     }
 
+    if (broadcastedInterviewDoc.interestedInterviewees.includes(user.id)) {
+      res.status(400);
+      throw new Error("Already applied to this interview");
+    }
+
     broadcastedInterviewDoc.interestedInterviewees.push(user.id);
 
     await broadcastedInterviewDoc.save();
@@ -433,7 +456,7 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
 
     if (user.id === interviewRequest.requestedBy) {
       res.status(403);
-      throw new Error("Author cannot perform this operation");
+      throw new Error("You are not authorized to accept this request");
     }
 
     const interviewer = await User.findById(interviewRequest.interviewer);
@@ -490,9 +513,9 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const interivewRequestId = req.params.interivewRequestId;
+    const interviewRequestId = req.params.interviewRequestId;
 
-    if (!interivewRequestId) {
+    if (!interviewRequestId) {
       res.status(403);
       throw new Error("No interview id found!");
     }
@@ -510,7 +533,7 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
           $or: [{ interviewee: user._id }, { interviewer: user._id }],
         },
         {
-          _id: interivewRequestId,
+          _id: interviewRequestId,
         },
       ],
     });
@@ -561,6 +584,156 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
   }
 );
 
+// @desc   Reject a peer to peer interview request
+// @route  POST /api/interview/request/peer-to-peer/reject/:interviewRequestId
+// @access Private
+const rejectPeerToPeerInterviewRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as UserType;
+
+    if (!user) {
+      res.status(401);
+      throw new Error("User not authenticated");
+    }
+
+    const interviewRequestId = req.params.interviewRequestId;
+
+    if (!interviewRequestId) {
+      res.status(403);
+      throw new Error("No interview id found!");
+    }
+
+    const interviewRequest = await PeerToPeerInterviewRequest.findOne({
+      $and: [
+        {
+          $or: [{ interviewee: user._id }, { interviewer: user._id }],
+        },
+        {
+          _id: interviewRequestId,
+        },
+      ],
+    });
+
+    if (!interviewRequest) {
+      res.status(404);
+      throw new Error("Interview request not found or inaccessible");
+    }
+
+    if (user.id === interviewRequest.requestedBy) {
+      res.status(403);
+      throw new Error("You are not authorized to reject this request");
+    }
+
+    interviewRequest.isRejected = true;
+
+    await interviewRequest.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Interview setup successfully",
+      data: interviewRequest,
+    });
+  }
+);
+
+// @desc   Withdraw a peer to peer interview request
+// @route  POST /api/interview/request/peer-to-peer/withdraw/:interviewRequestId
+// @access Private
+const withdrawPeerToPeerInterviewRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as UserType;
+
+    if (!user) {
+      res.status(401);
+      throw new Error("User not authenticated");
+    }
+
+    const interviewRequestId = req.params.interviewRequestId;
+
+    if (!interviewRequestId) {
+      res.status(403);
+      throw new Error("No interview id found!");
+    }
+
+    const interviewRequest = await PeerToPeerInterviewRequest.findOne({
+      $and: [
+        {
+          $or: [{ interviewee: user._id }, { interviewer: user._id }],
+        },
+        {
+          _id: interviewRequestId,
+        },
+      ],
+    });
+
+    if (!interviewRequest) {
+      res.status(404);
+      throw new Error("Interview request not found or inaccessible");
+    }
+
+    if (user.id !== interviewRequest.requestedBy.toString()) {
+      res.status(403);
+      throw new Error("You are not authorized to withdraw this request");
+    }
+
+    interviewRequest.isWithdrawn = true;
+
+    await interviewRequest.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Interview setup successfully",
+      data: interviewRequest,
+    });
+  }
+);
+
+// @desc   Withdraw a broadcasted interview request
+// @route  POST /api/interview/request/broadcasted/withdraw/:interviewRequestId
+// @access Private
+const withdrawBroadcastedInterviewRequest = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as UserType;
+
+    if (!user) {
+      res.status(401);
+      throw new Error("User not authenticated");
+    }
+
+    const interviewRequestId = req.params.interviewRequestId;
+    console.log({ interviewRequestId });
+
+    if (!interviewRequestId) {
+      res.status(403);
+      throw new Error("No interview id found!");
+    }
+
+    const interviewRequest = await BroadcastedInterviewRequest.findById(
+      interviewRequestId
+    );
+
+    if (!interviewRequest) {
+      res.status(404);
+      throw new Error("Interview request not found or inaccessible");
+    }
+
+    if (user.id !== interviewRequest.interviewer.toString()) {
+      res.status(403);
+      throw new Error("You are not authorized to withdraw the request");
+    }
+
+    interviewRequest.isWithdrawn = true;
+
+    await interviewRequest.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Interview setup successfully",
+      data: interviewRequest,
+    });
+  }
+);
+
 export {
   getEligibleInterviewees,
   getEligibleInterviewers,
@@ -575,4 +748,7 @@ export {
   applyToBroadcastedInterview,
   acceptPeerToPeerInterviewRequest,
   acceptBroadcastedInterviewRequest,
+  rejectPeerToPeerInterviewRequest,
+  withdrawPeerToPeerInterviewRequest,
+  withdrawBroadcastedInterviewRequest,
 };
