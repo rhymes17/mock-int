@@ -2,7 +2,6 @@
 
 import React from "react";
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 export default function Login() {

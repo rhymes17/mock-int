@@ -7,6 +7,7 @@ import errorHandler from "./middlewares/errorMiddleware";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import skillRoutes from "./routes/skill.routes";
+import interviewRoutes from "./routes/interview.routes";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/skills", skillRoutes);
+app.use("/api/interview", interviewRoutes);
 app.use(errorHandler);
 
 export default app;
