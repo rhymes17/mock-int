@@ -1,6 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 
-export default function DashboardLayout({
+export default function ProtectedRoutesLayout({
   children,
 }: {
   children: React.ReactNode;
