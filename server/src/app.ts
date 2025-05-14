@@ -8,6 +8,8 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import skillRoutes from "./routes/skill.routes";
 import interviewRoutes from "./routes/interview.routes";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 

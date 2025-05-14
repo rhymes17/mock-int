@@ -13,7 +13,7 @@ export const protectedRoute = asyncHandler(
 
     if (!token) {
       res.status(401);
-      throw new Error("User not authenticated");
+      return next(new Error("User not authenticated"));
     }
 
     try {
@@ -27,14 +27,14 @@ export const protectedRoute = asyncHandler(
       );
       if (!user) {
         res.status(404);
-        throw new Error("User not found!");
+        return next(new Error("User not found!"));
       }
 
       req.user = user;
       next();
     } catch (error) {
       res.status(401);
-      throw new Error("User not authenticated");
+      return next(new Error("User not authenticated"));
     }
   }
 );

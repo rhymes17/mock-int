@@ -1,8 +1,21 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../utils/asyncHandler";
-import User, { UserType } from "../Models/User";
-import Skill from "../Models/Skill";
 import mongoose from "mongoose";
+import User, { UserType } from "../Models/User";
+import { asyncHandler } from "../utils/asyncHandler";
+
+// @desc   Get logged in user
+// @route  GET /api/user/me
+// @access Private
+const getLoggedInUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.status(200).json({ success: true, message: "User found", data: user });
+});
 
 // @desc   Get user profile
 // @route  GET /api/user/:id
@@ -79,4 +92,4 @@ const editUserProfile = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export { getUserProfile, editUserProfile };
+export { editUserProfile, getUserProfile, getLoggedInUser };
