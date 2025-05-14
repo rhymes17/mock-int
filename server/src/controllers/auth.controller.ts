@@ -100,4 +100,22 @@ const oAuthCallback = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export { oAuthLogin, oAuthCallback };
+// @desc   Log out user
+// @route  POST /api/auth/logout
+// @access Private
+const oAuthLogout = asyncHandler((req: Request, res: Response) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(401);
+    throw new Error("User not logged in!");
+  }
+
+  // Remove cookie
+  res.clearCookie("token");
+  res.status(200).json({
+    success: true,
+    message: "User logged out successfully",
+  });
+});
+export { oAuthLogin, oAuthCallback, oAuthLogout };

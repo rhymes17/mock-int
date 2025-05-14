@@ -13,7 +13,7 @@ export default function LoginLayout({
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      redirect("/dashboard");
+      redirect("/");
     }
   }, [isAuthenticated, user]);
   return children;

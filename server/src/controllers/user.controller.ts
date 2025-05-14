@@ -14,7 +14,17 @@ const getLoggedInUser = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("User not found");
   }
 
-  res.status(200).json({ success: true, message: "User found", data: user });
+  const userInfo = {
+    email: user.email,
+    name: user.name,
+    avatar: user.avatar,
+    _id: user._id,
+    profile: user.profile,
+  };
+
+  res
+    .status(200)
+    .json({ success: true, message: "User found", data: userInfo });
 });
 
 // @desc   Get user profile

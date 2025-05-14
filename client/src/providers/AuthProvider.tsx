@@ -1,6 +1,7 @@
 "use client";
 
-import { useLoggedInUser } from "@/hooks/useUser";
+import { useLoggedInUser, useLogoutUser } from "@/hooks/useUser";
+import { redirect } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export interface ISkill {
@@ -20,14 +21,9 @@ interface Profile {
 }
 
 interface IUser {
-  googleId?: string;
   email: string;
   name: string;
   avatar: string;
-  accessToken?: string;
-  refreshToken?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
   _id: string;
   profile: Profile;
 }
@@ -35,7 +31,10 @@ interface IUser {
 interface IAuthContext {
   user: IUser | null;
   isAuthenticated: boolean;
+  logout: () => void;
 }
+
+const CACHED_USER = "cached_user";
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
@@ -44,6 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const { data: loggedInUser, error } = useLoggedInUser();
+  const logoutMutation = useLogoutUser();
 
   useEffect(() => {
     if (loggedInUser) {
@@ -55,11 +55,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [loggedInUser, error]);
 
+  const logout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        setUser(null);
+      },
+      onError: (err: any) => {
+        console.error("Logout failed:", err);
+      },
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         isAuthenticated,
+        logout,
       }}
     >
       {children}
