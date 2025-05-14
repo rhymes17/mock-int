@@ -1,8 +1,10 @@
-import Image from "next/image";
-import Login from "./login/page";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Dashboard from "./dashboard/page";
 
 export default function Home() {
   return (
-    <Login />
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
   );
 }
