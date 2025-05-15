@@ -1,40 +1,14 @@
 "use client";
 
 import { useLoggedInUser, useLogoutUser } from "@/hooks/useUser";
-import { redirect } from "next/navigation";
+import { IUser } from "@/types";
 import { createContext, useContext, useEffect, useState } from "react";
-
-export interface ISkill {
-  name: string;
-}
-
-interface MySkill {
-  skill: ISkill;
-  yoe: number;
-}
-
-interface Profile {
-  totalYoe: number;
-  skills: MySkill[];
-  linkedInUrl?: string;
-  bio?: string;
-}
-
-interface IUser {
-  email: string;
-  name: string;
-  avatar: string;
-  _id: string;
-  profile: Profile;
-}
 
 interface IAuthContext {
   user: IUser | null;
   isAuthenticated: boolean;
   logout: () => void;
 }
-
-const CACHED_USER = "cached_user";
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
