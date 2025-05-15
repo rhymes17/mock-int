@@ -1,5 +1,7 @@
 import { IUser } from "@/types";
 import { UseQueryResult } from "@tanstack/react-query";
+import Image from "next/image";
+import UserCard from "./UserCard";
 
 const UserList = ({
   queryFn,
@@ -17,14 +19,9 @@ const UserList = ({
   }
 
   return (
-    <div className="flex flex-wrap gap-5 h-full">
+    <div className="grid grid-cols-4 gap-5 h-full">
       {userData.map((user: IUser) => (
-        <div
-          key={user._id}
-          className="h-[18rem] w-[30%] border rounded-xl px-5 py-5"
-        >
-          <h1 className="">{user.name}</h1>
-        </div>
+        <UserCard key={user._id} user={user} />
       ))}
     </div>
   );

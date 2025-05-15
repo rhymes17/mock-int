@@ -14,13 +14,10 @@ const getLoggedInUser = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("User not found");
   }
 
-  const userInfo = {
-    email: user.email,
-    name: user.name,
-    avatar: user.avatar,
-    _id: user._id,
-    profile: user.profile,
-  };
+  const userInfo = await User.findById(user._id)
+    .select("-accessToken -refreshToken -googleId")
+    .populate("profile.skills.skill")
+    .exec();
 
   res
     .status(200)

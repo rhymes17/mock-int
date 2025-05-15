@@ -1,8 +1,10 @@
 export interface ISkill {
   name: string;
+  logo: string;
 }
 
 export interface MySkill {
+  _id: string;
   skill: ISkill;
   yoe: number;
 }

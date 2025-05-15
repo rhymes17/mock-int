@@ -9,6 +9,7 @@ import BroadcastedInterviewRequest, {
 } from "../Models/BroadcastedInterviewRequest";
 import Interview from "../Models/Interview";
 import { createGoogleMeetEvent } from "../utils/createGoogleMeetEvent";
+import { getSafeUsers } from "../utils/mongoDbHelpers";
 
 // @desc   Get all eligible interviewees for a user
 // @route  GET /api/interview/list-candidates
@@ -22,9 +23,11 @@ const getEligibleInterviewees = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const users = await User.find().select(
-      "-accessToken -refreshToken -googleId"
+    const users = (await getSafeUsers()).filter(
+      (fetchedUser) => fetchedUser.email !== user.email
     );
+
+    console.log({ users });
 
     res.status(200).json({
       success: true,
@@ -46,8 +49,8 @@ const getEligibleInterviewers = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const users = await User.find().select(
-      "-accessToken -refreshToken -googleId"
+    const users = (await getSafeUsers()).filter(
+      (fetchedUser) => fetchedUser.email !== user.email
     );
 
     res.status(200).json({

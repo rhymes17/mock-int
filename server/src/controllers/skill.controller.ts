@@ -51,7 +51,11 @@ const registerSkill = asyncHandler(async (req: Request, res: Response) => {
   });
   res
     .status(200)
-    .json({ success: true, message: "Got skills", data: skillDoc });
+    .json({
+      success: true,
+      message: "Registered skill successfully",
+      data: skillDoc,
+    });
 });
 
 export { getAllSkills, getSkill, registerSkill };
