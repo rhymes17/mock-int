@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 const REDIRECT_URI = "http://localhost:8000/api/auth/callback/google";
 
-const FRONTEND_URL = "http://localhost:3000";
+const FRONTEND_URL = "http://localhost:3000/dashboard";
 
 const oAuthLogin = asyncHandler((req: Request, res: Response) => {
   const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;

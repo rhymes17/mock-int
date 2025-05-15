@@ -22,7 +22,9 @@ const getEligibleInterviewees = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const users = await User.find();
+    const users = await User.find().select(
+      "-accessToken -refreshToken -googleId"
+    );
 
     res.status(200).json({
       success: true,
@@ -44,7 +46,9 @@ const getEligibleInterviewers = asyncHandler(
       throw new Error("User not authenticated");
     }
 
-    const users = await User.find();
+    const users = await User.find().select(
+      "-accessToken -refreshToken -googleId"
+    );
 
     res.status(200).json({
       success: true,
