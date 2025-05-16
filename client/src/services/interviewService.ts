@@ -32,8 +32,6 @@ export const requestPeerToPeerInterview = async ({
   try {
     const { otherUserId, role, time, requestType } = interviewData;
 
-    console.log("requesting interview", interviewData);
-
     const response = await api.post(
       `/interview/request/peer-to-peer/${otherUserId}`,
       { role, time, requestType }

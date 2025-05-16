@@ -4,7 +4,7 @@ import { useUserDetailsModal } from "@/providers/UserDetailsModalProvider";
 import Image from "next/image";
 import Button from "./Button";
 import { CtaType, IUser, RequestedAsType } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRequestPeerToPeerInterview } from "@/hooks/useInterview";
@@ -102,11 +102,12 @@ const RequestAnInterview = ({
 }) => {
   const [role, setRole] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const requestPeerToPeerInterviewMutation = useRequestPeerToPeerInterview();
 
   const handleCta = () => {
-    console.log("requesting ");
     if (!role || !selectedDate || !otherUserId) {
       console.log({ role, selectedDate, otherUserId });
       return;
@@ -121,6 +122,25 @@ const RequestAnInterview = ({
       },
     });
   };
+
+  useEffect(() => {
+    if (requestPeerToPeerInterviewMutation.isError) {
+      setErrorMessage(requestPeerToPeerInterviewMutation.error.message);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+    } else if (requestPeerToPeerInterviewMutation.isSuccess) {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 3000);
+    }
+    setSelectedDate(new Date());
+    setRole("");
+  }, [
+    requestPeerToPeerInterviewMutation.isError,
+    requestPeerToPeerInterviewMutation.isSuccess,
+  ]);
 
   return (
     <div className="relative h-full">
@@ -144,17 +164,28 @@ const RequestAnInterview = ({
         />
       </div>
 
-      <div className="absolute bottom-2 right-2">
-        <Button
-          disabled={
-            !role ||
-            !selectedDate ||
-            requestPeerToPeerInterviewMutation.isPending
-          }
-          isLoading={requestPeerToPeerInterviewMutation.isPending}
-          title="Request an Interview"
-          handleClick={handleCta}
-        />
+      <div className="absolute bottom-2 right-2 flex gap-5 items-center">
+        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+        {isSuccess ? (
+          <button
+            className={`rounded-lg px-4 py-2 bg-green-500
+             text-white`}
+          >
+            Success
+          </button>
+        ) : (
+          <Button
+            disabled={
+              !role ||
+              !selectedDate ||
+              requestPeerToPeerInterviewMutation.isPending ||
+              !!errorMessage
+            }
+            isLoading={requestPeerToPeerInterviewMutation.isPending}
+            title="Request an Interview"
+            handleClick={handleCta}
+          />
+        )}
       </div>
     </div>
   );
