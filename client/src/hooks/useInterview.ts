@@ -1,5 +1,9 @@
-import { getInterviewees, getInterviewers } from "@/services/interviewService";
-import { useQuery } from "@tanstack/react-query";
+import {
+  getInterviewees,
+  getInterviewers,
+  requestPeerToPeerInterview,
+} from "@/services/interviewService";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetInterviewers = () => {
   return useQuery({
@@ -12,5 +16,12 @@ export const useGetInterviewees = () => {
   return useQuery({
     queryKey: ["interviewees"],
     queryFn: getInterviewees,
+  });
+};
+
+export const useRequestPeerToPeerInterview = () => {
+  return useMutation({
+    mutationKey: ["peer-to-peer-interview"],
+    mutationFn: requestPeerToPeerInterview,
   });
 };

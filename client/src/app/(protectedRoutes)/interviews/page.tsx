@@ -1,7 +1,6 @@
 "use client";
 
 import UserList from "@/components/UserList";
-import { useGetInterviewees, useGetInterviewers } from "@/hooks/useInterview";
 import { useState } from "react";
 
 const Interviews = () => {
@@ -31,15 +30,15 @@ const Interviews = () => {
           } border-b`}
           onClick={() => setSelectedCategory("interviewee")}
         >
-          Find Interviewer
+          Find Interviewee
         </h3>
       </div>
 
       <div className="h-full mt-5">
         {selectedCategory === "interviewee" ? (
-          <UserList queryFn={useGetInterviewees} />
+          <UserList requestedAs="interviewer" ctaType="request"/>
         ) : (
-          <UserList queryFn={useGetInterviewers} />
+          <UserList requestedAs="interviewee" ctaType="request"/>
         )}
       </div>
     </div>

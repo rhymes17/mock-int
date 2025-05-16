@@ -23,3 +23,7 @@ export interface IUser {
   _id: string;
   profile: Profile;
 }
+
+export type CtaType = "request" | "accept";
+
+export type RequestedAsType = "interviewer" | "interviewee";

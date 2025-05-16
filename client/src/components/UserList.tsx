@@ -1,14 +1,18 @@
-import { IUser } from "@/types";
-import { UseQueryResult } from "@tanstack/react-query";
-import Image from "next/image";
+import { useGetInterviewees, useGetInterviewers } from "@/hooks/useInterview";
+import { CtaType, IUser, RequestedAsType } from "@/types";
 import UserCard from "./UserCard";
 
 const UserList = ({
-  queryFn,
+  requestedAs,
+  ctaType,
 }: {
-  queryFn: () => UseQueryResult<IUser[], Error>;
+  requestedAs: RequestedAsType;
+  ctaType: CtaType;
 }) => {
-  const { data: userData, isLoading, isError, error } = queryFn();
+  // If requesting as an interviewee than list all the valid interviewers and vice-versa
+  const queryFn =
+    requestedAs === "interviewee" ? useGetInterviewers : useGetInterviewees;
+  const { data: userData, isLoading, error } = queryFn();
 
   if (isLoading) {
     return <h1>Loading....</h1>;
@@ -21,7 +25,12 @@ const UserList = ({
   return (
     <div className="grid grid-cols-4 gap-5 h-full">
       {userData.map((user: IUser) => (
-        <UserCard key={user._id} user={user} />
+        <UserCard
+          key={user._id}
+          user={user}
+          requestedAs={requestedAs}
+          ctaType={ctaType}
+        />
       ))}
     </div>
   );

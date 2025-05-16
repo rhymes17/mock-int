@@ -27,8 +27,6 @@ const getEligibleInterviewees = asyncHandler(
       (fetchedUser) => fetchedUser.email !== user.email
     );
 
-    console.log({ users });
-
     res.status(200).json({
       success: true,
       message: "Eligible candidated fetched successfully",

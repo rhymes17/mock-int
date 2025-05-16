@@ -1,12 +1,32 @@
-import { IUser } from "@/types";
+import { useUserDetailsModal } from "@/providers/UserDetailsModalProvider";
+import { CtaType, IUser, RequestedAsType } from "@/types";
 import Image from "next/image";
 import { useState } from "react";
+import Button from "./Button";
 
-const UserCard = ({ user }: { user: IUser }) => {
+const UserCard = ({
+  user,
+  requestedAs,
+  ctaType,
+}: {
+  user: IUser;
+  requestedAs: RequestedAsType;
+  ctaType: CtaType;
+}) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
+  const { setUser, setCtaType, setRequestedAs, setIsModalVisible } =
+    useUserDetailsModal();
+
+  const handleClick = () => {
+    setUser(user);
+    setRequestedAs(requestedAs);
+    setCtaType(ctaType);
+    setIsModalVisible(true);
+  };
+
   return (
-    <div className="col-span-1 aspect-[4/3] border rounded-xl px-5 py-5 relative">
+    <div className="col-span-1 aspect-[4/3] shadow-lg rounded-xl px-5 py-5 relative bg-[#FFFFFD]/30 cursor-pointer">
       <div className="flex gap-2 items-center">
         <div className="h-[2rem] w-[2rem] rounded-full">
           <Image
@@ -34,12 +54,12 @@ const UserCard = ({ user }: { user: IUser }) => {
         {user.profile.skills.map((skill) => (
           <div
             key={skill._id}
-            className="h-[2rem] w-[2rem] aspect-square cursor-pointer relative"
+            className="h-[2rem] w-[2rem] aspect-square cursor-pointer relative "
             onMouseEnter={() => setIsTooltipVisible(true)}
             onMouseLeave={() => setIsTooltipVisible(false)}
           >
             <Image
-              className="rounded-sm"
+              className="rounded-sm "
               src={skill.skill.logo}
               height={100}
               width={100}
@@ -61,9 +81,9 @@ const UserCard = ({ user }: { user: IUser }) => {
         ))}
       </div>
 
-      <button className="absolute bottom-2 right-2 cursor-pointer rounded-lg px-4 py-2 bg-black text-white">
-        Check Profile
-      </button>
+      <div className="absolute bottom-2 right-2">
+        <Button title="Check Profile" handleClick={handleClick} />
+      </div>
     </div>
   );
 };
