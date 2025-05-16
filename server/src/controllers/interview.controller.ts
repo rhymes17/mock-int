@@ -80,6 +80,13 @@ const getPeerToPeerInterviewReceivedRequests = asyncHandler(
           requestedBy: { $ne: user._id },
         },
       ],
+    }).populate({
+      path: "interviewer interviewee requestedBy",
+      select: "-accessToken -refreshToken -googleId",
+      populate: {
+        path: "profile.skills.skill",
+        model: "Skill",
+      },
     });
 
     res.status(200).json({
@@ -104,6 +111,13 @@ const getPeerToPeerInterviewSentRequests = asyncHandler(
 
     const interviewRequests = await PeerToPeerInterviewRequest.find({
       requestedBy: user._id,
+    }).populate({
+      path: "interviewer interviewee requestedBy",
+      select: "-accessToken -refreshToken -googleId",
+      populate: {
+        path: "profile.skills.skill",
+        model: "Skill",
+      },
     });
 
     res.status(200).json({

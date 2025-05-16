@@ -15,16 +15,16 @@ const Navbar = () => {
   return (
     <div className="h-[4rem] w-[80%] bg-black/20 rounded-xl fixed top-5 left-0 right-0 mx-auto backdrop-blur-lg px-5 justify-center flex items-center ">
       <div className="flex gap-6">
-        <Link href="">
+        <Link href="/dashboard">
           <h3 className="text-xl">Home</h3>
         </Link>
-        <Link href="">
-          <h3 className="text-xl">Dashboard</h3>
-        </Link>
-        <Link href="">
+        <Link href="/interviews">
           <h3 className="text-xl">Interviews</h3>
         </Link>
-        <Link href="">
+        <Link href="/requests">
+          <h3 className="text-xl">Requests</h3>
+        </Link>
+        <Link href="/profile">
           <h3 className="text-xl">Profile</h3>
         </Link>
       </div>

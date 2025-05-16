@@ -24,6 +24,20 @@ export interface IUser {
   profile: Profile;
 }
 
+export interface InterviewRequest {
+  _id: string;
+  role: string;
+  time: Date;
+  interviewer: IUser;
+  interviewee: IUser;
+  requestedBy: IUser;
+  isAccepted: boolean;
+  isRejected: boolean;
+  isWithdrawn: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export type CtaType = "request" | "accept";
 
 export type RequestedAsType = "interviewer" | "interviewee";
