@@ -1,10 +1,19 @@
 "use client";
 
+import InterviewRequestDetailsModal from "@/components/InterviewRequestDetailsModal";
 import InterviewRequestList from "@/components/InterviewRequestList";
-import React, { useState } from "react";
+import { InterviewRequest } from "@/types";
+import { useState } from "react";
 
 const InterviewRequests = () => {
   const [requestType, setRequestType] = useState<"sent" | "received">("sent");
+
+  const [selectedInterviewRequest, setSelectedInterviewRequest] =
+    useState<InterviewRequest | null>(null);
+  const [
+    isInterviewRequestDetailsVisible,
+    setIsInterviewRequestDetailsVisible,
+  ] = useState(false);
 
   return (
     <div className="">
@@ -36,8 +45,24 @@ const InterviewRequests = () => {
       </div>
 
       <div className="h-full mt-5">
-        <InterviewRequestList requestType={requestType}/>
+        <InterviewRequestList
+          requestType={requestType}
+          setSelectedInterviewRequest={setSelectedInterviewRequest}
+          setIsInterviewRequestDetailsVisible={
+            setIsInterviewRequestDetailsVisible
+          }
+        />
       </div>
+
+      {selectedInterviewRequest && (
+        <InterviewRequestDetailsModal
+          isInterviewRequestDetailsVisible={isInterviewRequestDetailsVisible}
+          setIsInterviewRequestDetailsVisible={
+            setIsInterviewRequestDetailsVisible
+          }
+          interviewRequest={selectedInterviewRequest}
+        />
+      )}
     </div>
   );
 };

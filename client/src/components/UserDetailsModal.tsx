@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useRequestPeerToPeerInterview } from "@/hooks/useInterview";
+import BottomSheet from "./BottomSheet";
 
 const UserDetailsModal = () => {
   const { user, requestedAs, ctaType, setIsModalVisible, isModalVisible } =
@@ -16,22 +17,16 @@ const UserDetailsModal = () => {
   if (!isModalVisible || !user) return null;
 
   return (
-    <div className="absolute bottom-0 h-[100%] w-[100%] bg-white/10 z-20 backdrop-blur-[3px] left-0 right-0 mx-auto border">
-      <div
-        onClick={() => setIsModalVisible(false)}
-        className="text-3xl absolute right-5 top-5 cursor-pointer"
-      >
-        X
-      </div>
-
-      <div className="absolute bottom-2 h-[80%] w-[98%] left-0 right-0 mx-auto bg-white rounded-2xl p-8">
-        <UserInformation
-          user={user}
-          requestedAs={requestedAs}
-          ctaType={ctaType}
-        />
-      </div>
-    </div>
+    <BottomSheet
+      isBottomSheetVisible={isModalVisible}
+      setIsBottomSheetVisible={setIsModalVisible}
+    >
+      <UserInformation
+        user={user}
+        requestedAs={requestedAs}
+        ctaType={ctaType}
+      />
+    </BottomSheet>
   );
 };
 

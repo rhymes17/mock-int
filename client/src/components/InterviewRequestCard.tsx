@@ -4,16 +4,29 @@ import Image from "next/image";
 
 const InterviewRequestCard = ({
   interviewRequest,
+  setSelectedInterviewRequest,
+  setIsInterviewRequestDetailsVisible,
 }: {
   interviewRequest: InterviewRequest;
+  setSelectedInterviewRequest: React.Dispatch<
+    React.SetStateAction<InterviewRequest | null>
+  >;
+  setIsInterviewRequestDetailsVisible: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
 }) => {
-  const { role, time, interviewee, interviewer } =
-    interviewRequest;
+  const { role, time, interviewee, interviewer } = interviewRequest;
 
   const interviewDateAndTime = new Date(time);
 
   return (
-    <Card handleButtonClick={() => {}} buttonTitle="Check Request">
+    <Card
+      handleButtonClick={() => {
+        setSelectedInterviewRequest(interviewRequest);
+        setIsInterviewRequestDetailsVisible(true);
+      }}
+      buttonTitle="Check Request"
+    >
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-[600]">{role}</h1>
         <div>
