@@ -9,11 +9,37 @@ export interface MySkill {
   yoe: number;
 }
 
+export interface Experience {
+  _id: string;
+  companyName: string;
+  role: string;
+  from: Date;
+  to: Date | null;
+  currentlyWorking: boolean;
+  techStack: string[];
+  description: string;
+}
+
+export interface Project {
+  _id: string;
+  name: string;
+  from: Date;
+  to: Date;
+  techStack: string[];
+  deployedProjectLink: string;
+  githubRepoLink: string;
+  description: string;
+}
+
 export interface Profile {
   totalYoe: number;
   skills: MySkill[];
   linkedInUrl?: string;
   bio?: string;
+  leetcodeUrl?: string;
+  githubUrl?: string;
+  experience: Experience[];
+  projects: Project[];
 }
 
 export interface IUser {

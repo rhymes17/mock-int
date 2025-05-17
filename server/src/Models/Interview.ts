@@ -6,10 +6,8 @@ export interface Interview {
   time: Date;
   interviewer: UserType;
   interviewee: UserType;
-  requestedBy: UserType;
-  isAccepted: boolean;
-  isRejected: boolean;
-  isWithdrawn: boolean;
+  interviewLink: string;
+  feedback: string;
 }
 
 const interviewSchema = new mongoose.Schema(
