@@ -444,7 +444,7 @@ const applyToBroadcastedInterview = asyncHandler(
 const acceptPeerToPeerInterviewRequest = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as UserType;
-
+    
     if (!user) {
       res.status(401);
       throw new Error("User not authenticated");
@@ -473,7 +473,9 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
       throw new Error("Interview request not found or inaccessible");
     }
 
-    if (user.id === interviewRequest.requestedBy) {
+    console.log({id: user.id, req: interviewRequest.requestedBy})
+
+    if (user.id === interviewRequest.requestedBy.toString()) {
       res.status(403);
       throw new Error("You are not authorized to accept this request");
     }

@@ -25,8 +25,6 @@ const InterviewRequestList = ({
 
   const { data: interviewRequests, isLoading, isError } = queryFn();
 
-  console.log({ interviewRequests });
-
   if (isLoading) {
     return <h1>Fetching Requests....</h1>;
   }

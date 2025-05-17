@@ -3,16 +3,25 @@
 import { useUserDetailsModal } from "@/providers/UserDetailsModalProvider";
 import Image from "next/image";
 import Button from "./Button";
-import { CtaType, IUser, RequestedAsType } from "@/types";
+import { CtaType, InterviewRequest, IUser, RequestedAsType } from "@/types";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useRequestPeerToPeerInterview } from "@/hooks/useInterview";
+import {
+  useAcceptPeerToPeerInterview,
+  useRequestPeerToPeerInterview,
+} from "@/hooks/useInterview";
 import BottomSheet from "./BottomSheet";
 
 const UserDetailsModal = () => {
-  const { user, requestedAs, ctaType, setIsModalVisible, isModalVisible } =
-    useUserDetailsModal();
+  const {
+    user,
+    requestedAs,
+    ctaType,
+    setIsModalVisible,
+    isModalVisible,
+    interviewRequest,
+  } = useUserDetailsModal();
 
   if (!isModalVisible || !user) return null;
 
@@ -25,6 +34,11 @@ const UserDetailsModal = () => {
         user={user}
         requestedAs={requestedAs}
         ctaType={ctaType}
+        interviewRequest={
+          ctaType === "accept" && !!interviewRequest
+            ? interviewRequest
+            : undefined
+        }
       />
     </BottomSheet>
   );
@@ -36,10 +50,12 @@ const UserInformation = ({
   user,
   requestedAs,
   ctaType,
+  interviewRequest,
 }: {
   user: IUser;
   requestedAs: RequestedAsType;
   ctaType: CtaType;
+  interviewRequest?: InterviewRequest;
 }) => {
   return (
     <div className="grid grid-cols-4 grid-rows-4 h-full gap-x-5 gap-y-3">
@@ -76,66 +92,92 @@ const UserInformation = ({
         Experience
       </div>
       <div className="col-span-2 row-span-2 rounded-xl p-5 shadow-xl ">
-        <RequestAnInterview
+        <ScheduleInterview
           otherUserId={user._id}
           requestedAs={requestedAs}
           ctaType={ctaType}
+          interviewRequest={interviewRequest}
         />
       </div>
     </div>
   );
 };
 
-const RequestAnInterview = ({
+const ScheduleInterview = ({
   otherUserId,
   requestedAs,
   ctaType,
+  interviewRequest,
 }: {
   otherUserId: string;
   requestedAs: RequestedAsType;
   ctaType: CtaType;
+  interviewRequest?: InterviewRequest;
 }) => {
-  const [role, setRole] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  if (ctaType === "accept" && !interviewRequest)
+    return <h1>No interview request selected </h1>;
+
+  const [role, setRole] = useState(
+    !!interviewRequest ? interviewRequest.role : ""
+  );
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    interviewRequest ? new Date(interviewRequest.time) : new Date()
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
   const requestPeerToPeerInterviewMutation = useRequestPeerToPeerInterview();
+  const acceptPeerToPeerInterviewMutation = useAcceptPeerToPeerInterview();
+
+  const selectedMutation =
+    ctaType === "accept"
+      ? acceptPeerToPeerInterviewMutation
+      : requestPeerToPeerInterviewMutation;
 
   const handleCta = () => {
-    if (!role || !selectedDate || !otherUserId) {
-      console.log({ role, selectedDate, otherUserId });
-      return;
+    if (ctaType === "request") {
+      if (!role || !selectedDate || !otherUserId) {
+        return;
+      }
+      requestPeerToPeerInterviewMutation.mutate({
+        interviewData: {
+          otherUserId,
+          role,
+          time: selectedDate,
+          requestType: requestedAs,
+        },
+      });
+    } else {
+      if (!interviewRequest) {
+        return;
+      }
+      acceptPeerToPeerInterviewMutation.mutate({
+        interviewRequestId: interviewRequest._id,
+      });
     }
-
-    requestPeerToPeerInterviewMutation.mutate({
-      interviewData: {
-        otherUserId,
-        role,
-        time: selectedDate,
-        requestType: requestedAs,
-      },
-    });
   };
 
   useEffect(() => {
-    if (requestPeerToPeerInterviewMutation.isError) {
-      setErrorMessage(requestPeerToPeerInterviewMutation.error.message);
+    if (selectedMutation.isError) {
+      setErrorMessage(selectedMutation.error.message);
       setTimeout(() => {
         setErrorMessage("");
       }, 3000);
-    } else if (requestPeerToPeerInterviewMutation.isSuccess) {
+      if (ctaType === "request") {
+        setSelectedDate(new Date());
+        setRole("");
+      }
+    } else if (selectedMutation.isSuccess) {
       setIsSuccess(true);
       setTimeout(() => {
         setIsSuccess(false);
       }, 3000);
+      if (ctaType === "request") {
+        setSelectedDate(new Date());
+        setRole("");
+      }
     }
-    setSelectedDate(new Date());
-    setRole("");
-  }, [
-    requestPeerToPeerInterviewMutation.isError,
-    requestPeerToPeerInterviewMutation.isSuccess,
-  ]);
+  }, [selectedMutation.isError, selectedMutation.isSuccess]);
 
   return (
     <div className="relative h-full">
@@ -149,6 +191,7 @@ const RequestAnInterview = ({
             type="text"
             value={role}
             onChange={(e) => setRole(e.target.value)}
+            disabled={!!interviewRequest}
             className=" w-[50%] py-2 px-3 rounded-xl bg-yellow-100 outline-none shadow-xs"
           />
         </div>
@@ -156,6 +199,7 @@ const RequestAnInterview = ({
         <DateTimePicker
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
+          disabled={!!interviewRequest}
         />
       </div>
 
@@ -173,11 +217,18 @@ const RequestAnInterview = ({
             disabled={
               !role ||
               !selectedDate ||
-              requestPeerToPeerInterviewMutation.isPending ||
-              !!errorMessage
+              selectedMutation.isPending ||
+              !!errorMessage ||
+              interviewRequest?.isAccepted ||
+              interviewRequest?.isRejected ||
+              interviewRequest?.isWithdrawn
             }
-            isLoading={requestPeerToPeerInterviewMutation.isPending}
-            title="Request an Interview"
+            isLoading={selectedMutation.isPending}
+            title={
+              ctaType === "request"
+                ? "Request an Interview"
+                : "Accept Inteview Request"
+            }
             handleClick={handleCta}
           />
         )}
@@ -189,9 +240,11 @@ const RequestAnInterview = ({
 const DateTimePicker = ({
   selectedDate,
   setSelectedDate,
+  disabled,
 }: {
   selectedDate: Date | null;
   setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
+  disabled?: boolean;
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -203,6 +256,7 @@ const DateTimePicker = ({
         selected={selectedDate}
         onChange={(date) => setSelectedDate(date)}
         showTimeSelect
+        disabled={disabled}
         dateFormat="Pp"
         className="w-full border border-gray-300 rounded-md p-2"
       />

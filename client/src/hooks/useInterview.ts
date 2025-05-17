@@ -1,4 +1,5 @@
 import {
+  acceptPeerToPeerInterview,
   getInterviewees,
   getInterviewers,
   getPeerToPeerInterviewReceivedRequests,
@@ -23,7 +24,7 @@ export const useGetInterviewees = () => {
 
 export const useRequestPeerToPeerInterview = () => {
   return useMutation({
-    mutationKey: ["peer-to-peer-interview"],
+    mutationKey: ["request-peer-to-peer-interview"],
     mutationFn: requestPeerToPeerInterview,
   });
 };
@@ -39,5 +40,12 @@ export const useGetPeerToPeerInterviewReceivedRequests = () => {
   return useQuery({
     queryKey: ["received-peer-to-peer-requests"],
     queryFn: getPeerToPeerInterviewReceivedRequests,
+  });
+};
+
+export const useAcceptPeerToPeerInterview = () => {
+  return useMutation({
+    mutationKey: ["accept-peer-to-peer-interview"],
+    mutationFn: acceptPeerToPeerInterview,
   });
 };

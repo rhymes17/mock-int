@@ -42,25 +42,40 @@ export const requestPeerToPeerInterview = async ({
   }
 };
 
-export const getPeerToPeerInterviewSentRequests =
-  async (): Promise<InterviewRequest[]> => {
-    try {
-      const response = await api.get("/interview/request/peer-to-peer/sent");
-      return response.data.data;
-    } catch (error: any) {
-      throw new Error(error.response.data.message);
-    }
-  };
+export const acceptPeerToPeerInterview = async ({
+  interviewRequestId,
+}: {
+  interviewRequestId: string;
+}): Promise<InterviewRequest> => {
+  try {
+    const response = await api.post(
+      `interview/request/peer-to-peer/accept/${interviewRequestId}`
+    );
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message);
+  }
+};
 
-export const getPeerToPeerInterviewReceivedRequests =
-  async (): Promise<InterviewRequest[]> => {
-    try {
-      const response = await api.get(
-        "/interview/request/peer-to-peer/received"
-      );
-      console.log({ response });
-      return response.data.data;
-    } catch (error: any) {
-      throw new Error(error.response.data.message);
-    }
-  };
+export const getPeerToPeerInterviewSentRequests = async (): Promise<
+  InterviewRequest[]
+> => {
+  try {
+    const response = await api.get("/interview/request/peer-to-peer/sent");
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message);
+  }
+};
+
+export const getPeerToPeerInterviewReceivedRequests = async (): Promise<
+  InterviewRequest[]
+> => {
+  try {
+    const response = await api.get("/interview/request/peer-to-peer/received");
+    console.log({ response });
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message);
+  }
+};

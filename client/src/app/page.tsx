@@ -1,10 +1,5 @@
-import ProtectedRoute from "@/components/ProtectedRoute";
-import Dashboard from "./(protectedRoutes)/dashboard/page";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <ProtectedRoute>
-      <Dashboard />
-    </ProtectedRoute>
-  );
+  redirect("/dashboard");
 }

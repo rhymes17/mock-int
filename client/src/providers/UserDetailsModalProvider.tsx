@@ -1,6 +1,6 @@
 "use client";
 
-import { CtaType, IUser, RequestedAsType } from "@/types";
+import { CtaType, InterviewRequest, IUser, RequestedAsType } from "@/types";
 import { createContext, useContext, useState } from "react";
 
 interface IUserDetailsModalContext {
@@ -10,6 +10,10 @@ interface IUserDetailsModalContext {
   setCtaType: React.Dispatch<React.SetStateAction<CtaType>>;
   requestedAs: RequestedAsType;
   setRequestedAs: React.Dispatch<React.SetStateAction<RequestedAsType>>;
+  interviewRequest: InterviewRequest | null;
+  setInterviewRequest: React.Dispatch<
+    React.SetStateAction<InterviewRequest | null>
+  >;
   isModalVisible: boolean;
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,6 +32,8 @@ export const UserDetailsModalProvider = ({
   const [requestedAs, setRequestedAs] =
     useState<RequestedAsType>("interviewee");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [interviewRequest, setInterviewRequest] =
+    useState<InterviewRequest | null>(null);
 
   return (
     <UserDetailsModalContext.Provider
@@ -38,6 +44,8 @@ export const UserDetailsModalProvider = ({
         setCtaType,
         requestedAs,
         setRequestedAs,
+        interviewRequest,
+        setInterviewRequest,
         isModalVisible,
         setIsModalVisible,
       }}

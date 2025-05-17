@@ -19,13 +19,31 @@ const InterviewRequestCard = ({
 
   const interviewDateAndTime = new Date(time);
 
+  const getButtonTitle = () => {
+    if (interviewRequest.isAccepted) {
+      return "Scheduled";
+    }
+    if (interviewRequest.isRejected) {
+      return "Rejected";
+    }
+    if (interviewRequest.isWithdrawn) {
+      return "Withdrawn";
+    }
+    return "Check Request";
+  };
+
   return (
     <Card
       handleButtonClick={() => {
         setSelectedInterviewRequest(interviewRequest);
         setIsInterviewRequestDetailsVisible(true);
       }}
-      buttonTitle="Check Request"
+      buttonTitle={getButtonTitle()}
+      buttonDisabled={
+        interviewRequest.isAccepted ||
+        interviewRequest.isRejected ||
+        interviewRequest.isWithdrawn
+      }
     >
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-[600]">{role}</h1>
