@@ -93,6 +93,11 @@ const Scheduler = () => {
 
   useEffect(() => {
     setCalendar(getCalendar(new Date(selectedYear, selectedMonth, 1)));
+    setSelectedDate(
+      getMonth(new Date()) === selectedMonth
+        ? getDate(addDays(new Date(), 2))
+        : 1
+    );
 
     return () => {};
   }, [selectedMonth]);
