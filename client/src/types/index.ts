@@ -67,3 +67,12 @@ export interface InterviewRequest {
 export type CtaType = "request" | "accept";
 
 export type RequestedAsType = "interviewer" | "interviewee";
+
+export type SelectedTimeSlots = {
+  [date: string]: Map<string, boolean>;
+};
+
+export type TimeSlot = {
+  key: string;
+  value: string;
+};
