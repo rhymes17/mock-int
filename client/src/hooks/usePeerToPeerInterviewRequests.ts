@@ -4,7 +4,7 @@ import {
   getPeerToPeerInterviewSentRequest,
   getPeerToPeerInterviewSentRequests,
   requestPeerToPeerInterview,
-} from "@/services/interviewService";
+} from "@/services/peerToPeerInterviewRequestService";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useRequestPeerToPeerInterview = () => {
