@@ -1,45 +1,65 @@
 "use client";
 
-import InterviewRequestDetailsModal from "@/components/InterviewRequestDetailsModal";
 import InterviewRequestList from "@/components/InterviewRequestList";
-import { PeerToPeerInterviewRequest } from "@/types";
 import { useState } from "react";
 
 const InterviewRequests = () => {
-  const [requestType, setRequestType] = useState<"sent" | "received">("sent");
-
-  const [selectedInterviewRequest, setSelectedInterviewRequest] =
-    useState<PeerToPeerInterviewRequest | null>(null);
-  const [
-    isInterviewRequestDetailsVisible,
-    setIsInterviewRequestDetailsVisible,
-  ] = useState(false);
+  const [requestDirection, setRequestDirection] = useState<"sent" | "received">(
+    "received"
+  );
+  const [requestType, setRequestType] = useState<
+    "peer-to-peer" | "broadcasted"
+  >("peer-to-peer");
 
   return (
     <div className="">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-[600]">Interview Requests</h1>
 
-        <div className="flex items-center">
-          <div
-            onClick={() => setRequestType("sent")}
-            className={`py-2 border w-[7rem] border-black rounded-l-2xl text-center cursor-pointer ${
-              requestType === "sent"
-                ? "bg-black text-white"
-                : "bg-white text-black"
-            }`}
-          >
-            Sent
+        <div className="flex items-center gap-8">
+          <div className="flex items-center">
+            <div
+              onClick={() => setRequestType("peer-to-peer")}
+              className={`py-2 border w-[9rem] border-black rounded-l-2xl text-center cursor-pointer ${
+                requestType === "peer-to-peer"
+                  ? "bg-black text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              Peer To Peer
+            </div>
+            <div
+              onClick={() => setRequestType("broadcasted")}
+              className={`py-2 w-[9rem] border border-black border-l-transparent rounded-r-2xl text-center cursor-pointer ${
+                requestType === "broadcasted"
+                  ? "bg-black text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              Broadcasted
+            </div>
           </div>
-          <div
-            onClick={() => setRequestType("received")}
-            className={`py-2 w-[7rem] border border-black border-l-transparent rounded-r-2xl text-center cursor-pointer ${
-              requestType === "received"
-                ? "bg-black text-white"
-                : "bg-white text-black"
-            }`}
-          >
-            Received
+          <div className="flex items-center">
+            <div
+              onClick={() => setRequestDirection("sent")}
+              className={`py-2 border w-[7rem] border-black rounded-l-2xl text-center cursor-pointer ${
+                requestDirection === "sent"
+                  ? "bg-black text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              Sent
+            </div>
+            <div
+              onClick={() => setRequestDirection("received")}
+              className={`py-2 w-[7rem] border border-black border-l-transparent rounded-r-2xl text-center cursor-pointer ${
+                requestDirection === "received"
+                  ? "bg-black text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              Received
+            </div>
           </div>
         </div>
       </div>
@@ -47,22 +67,9 @@ const InterviewRequests = () => {
       <div className="h-full mt-5">
         <InterviewRequestList
           requestType={requestType}
-          setSelectedInterviewRequest={setSelectedInterviewRequest}
-          setIsInterviewRequestDetailsVisible={
-            setIsInterviewRequestDetailsVisible
-          }
+          requestDirection={requestDirection}
         />
       </div>
-
-      {selectedInterviewRequest && (
-        <InterviewRequestDetailsModal
-          isInterviewRequestDetailsVisible={isInterviewRequestDetailsVisible}
-          setIsInterviewRequestDetailsVisible={
-            setIsInterviewRequestDetailsVisible
-          }
-          interviewRequest={selectedInterviewRequest}
-        />
-      )}
     </div>
   );
 };

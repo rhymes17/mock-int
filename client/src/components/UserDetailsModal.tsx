@@ -251,35 +251,6 @@ const ScheduleInterview = ({
     </div>
   );
 };
-
-const DateTimePicker = ({
-  selectedDate,
-  setSelectedDate,
-  disabled,
-}: {
-  selectedDate: Date | null;
-  setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
-  disabled?: boolean;
-}) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor="datetime" className=" font-medium text-gray-700">
-        Select Date & Time
-      </label>
-      <DatePicker
-        id="datetime"
-        selected={selectedDate}
-        onChange={(date) => setSelectedDate(date)}
-        showTimeSelect
-        disabled={disabled}
-        dateFormat="Pp"
-        className="w-full border border-gray-300 rounded-md p-2"
-      />
-    </div>
-  );
-};
-
-//  Commented out
 // const TimelineComponent = ({
 //   firstStep,
 //   viewType,

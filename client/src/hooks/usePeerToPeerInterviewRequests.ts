@@ -1,7 +1,7 @@
 import {
   acceptPeerToPeerInterview,
   getPeerToPeerInterviewReceivedRequests,
-  getPeerToPeerInterviewSentRequest,
+  getPeerToPeerInterviewRequest,
   getPeerToPeerInterviewSentRequests,
   requestPeerToPeerInterview,
 } from "@/services/peerToPeerInterviewRequestService";
@@ -21,10 +21,10 @@ export const useGetPeerToPeerInterviewSentRequests = () => {
   });
 };
 
-export const useGetPeerToPeerInterviewSentRequest = (requestId: string) => {
+export const useGetPeerToPeerInterviewRequest = (requestId: string) => {
   return useQuery({
-    queryKey: ["sent-peer-to-peer-request"],
-    queryFn: () => getPeerToPeerInterviewSentRequest(requestId),
+    queryKey: ["peer-to-peer-request"],
+    queryFn: () => getPeerToPeerInterviewRequest(requestId),
   });
 };
 

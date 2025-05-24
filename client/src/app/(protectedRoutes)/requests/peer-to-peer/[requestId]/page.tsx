@@ -3,7 +3,7 @@
 import Button from "@/components/Button";
 import {
   useAcceptPeerToPeerInterview,
-  useGetPeerToPeerInterviewSentRequest,
+  useGetPeerToPeerInterviewRequest,
 } from "@/hooks/usePeerToPeerInterviewRequests";
 
 import { useAuth } from "@/providers/AuthProvider";
@@ -19,7 +19,7 @@ const PeerToPeerInterviewRequest = () => {
     isLoading,
     isError,
     error,
-  } = useGetPeerToPeerInterviewSentRequest(requestId as string);
+  } = useGetPeerToPeerInterviewRequest(requestId as string);
 
   const acceptPeerToPeerInterviewMutation = useAcceptPeerToPeerInterview();
   const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);

@@ -111,7 +111,7 @@ const getBroadcastedInterviewRequest = asyncHandler(
 // @desc   Make broadcasted interview request
 // @route  POST /api/interview/request/broadcasted
 // @access Private
-const requestBroadcastedInterview = asyncHandler(
+const postBroadcastedInterview = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as UserType;
 
@@ -206,11 +206,11 @@ const applyToBroadcastedInterview = asyncHandler(
       selectedSlot,
     };
 
-    if (
-      broadcastedInterviewDoc.requests.find(
-        (request) => request.user.toString() === user._id
-      )
-    ) {
+    const hasUserAlreadyApplied = broadcastedInterviewDoc.requests.find(
+      (request) => request.user.toString() === user._id.toString()
+    );
+
+    if (hasUserAlreadyApplied) {
       res.status(400);
       throw new Error("Already applied to this interview");
     }
@@ -380,7 +380,7 @@ export {
   getBroadcastedInterviewReceivedRequests,
   getBroadcastedInterviewSentRequests,
   getBroadcastedInterviewRequest,
-  requestBroadcastedInterview,
+  postBroadcastedInterview,
   applyToBroadcastedInterview,
   acceptBroadcastedInterviewRequest,
   withdrawBroadcastedInterviewRequest,

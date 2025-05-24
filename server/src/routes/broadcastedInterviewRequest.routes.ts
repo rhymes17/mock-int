@@ -6,7 +6,7 @@ import {
   getBroadcastedInterviewReceivedRequests,
   getBroadcastedInterviewRequest,
   getBroadcastedInterviewSentRequests,
-  requestBroadcastedInterview,
+  postBroadcastedInterview,
   withdrawBroadcastedInterviewRequest,
 } from "../controllers/broadcastedInterviewRequest.controller";
 
@@ -30,7 +30,7 @@ router.get(
 );
 
 // Post Broadcasted Interview Request
-router.post("/", protectedRoute, requestBroadcastedInterview);
+router.post("/", protectedRoute, postBroadcastedInterview);
 
 // Apply to Broadcasted Interview
 router.post(

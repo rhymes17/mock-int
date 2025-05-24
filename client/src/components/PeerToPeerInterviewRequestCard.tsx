@@ -3,16 +3,12 @@ import Card from "./Card";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-const InterviewRequestCard = ({
+const PeerToPeerInterviewRequestCard = ({
   interviewRequest,
+  requestDirection,
 }: {
   interviewRequest: PeerToPeerInterviewRequest;
-  setSelectedInterviewRequest: React.Dispatch<
-    React.SetStateAction<PeerToPeerInterviewRequest | null>
-  >;
-  setIsInterviewRequestDetailsVisible: React.Dispatch<
-    React.SetStateAction<boolean>
-  >;
+  requestDirection: "sent" | "received";
 }) => {
   const { role, interviewee, interviewer } = interviewRequest;
 
@@ -32,7 +28,7 @@ const InterviewRequestCard = ({
   return (
     <Card
       handleButtonClick={() => {
-        redirect(`/requests/${interviewRequest._id}`);
+        redirect(`/requests/peer-to-peer/${interviewRequest._id}`);
       }}
       buttonTitle={getButtonTitle()}
       buttonDisabled={
@@ -72,4 +68,4 @@ const InterviewRequestCard = ({
   );
 };
 
-export default InterviewRequestCard;
+export default PeerToPeerInterviewRequestCard;

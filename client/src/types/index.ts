@@ -64,6 +64,18 @@ export interface PeerToPeerInterviewRequest {
   updatedAt: Date;
 }
 
+export interface BroadcastedInterviewRequest {
+  _id: string;
+  role: string;
+  availability: Date[];
+  interviewer: IUser;
+  requests: { user: IUser; selectedSlot: Date }[];
+  isAccepted: boolean;
+  isWithdrawn: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export type CtaType = "request" | "accept";
 
 export type RequestedAsType = "interviewer" | "interviewee";

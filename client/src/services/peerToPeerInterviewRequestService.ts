@@ -31,13 +31,11 @@ export const acceptPeerToPeerInterview = async ({
   interviewRequestId: string;
   selectedSlot: Date;
 }): Promise<PeerToPeerInterviewRequest> => {
-  console.log({ selectedSlot });
   try {
     const response = await api.post(
       `interview/request/peer-to-peer/accept/${interviewRequestId}`,
       { selectedSlot }
     );
-    console.log({ response });
     return response.data.data;
   } catch (error: any) {
     throw new Error(error.response.data.message);
@@ -55,7 +53,7 @@ export const getPeerToPeerInterviewSentRequests = async (): Promise<
   }
 };
 
-export const getPeerToPeerInterviewSentRequest = async (
+export const getPeerToPeerInterviewRequest = async (
   requestId: string
 ): Promise<PeerToPeerInterviewRequest> => {
   try {
@@ -73,7 +71,6 @@ export const getPeerToPeerInterviewReceivedRequests = async (): Promise<
 > => {
   try {
     const response = await api.get("/interview/request/peer-to-peer/received");
-    console.log({ response });
     return response.data.data;
   } catch (error: any) {
     throw new Error(error.response.data.message);

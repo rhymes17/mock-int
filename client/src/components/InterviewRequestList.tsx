@@ -2,28 +2,51 @@ import {
   useGetPeerToPeerInterviewReceivedRequests,
   useGetPeerToPeerInterviewSentRequests,
 } from "@/hooks/usePeerToPeerInterviewRequests";
-import InterviewRequestCard from "./InterviewRequestCard";
-import { PeerToPeerInterviewRequest } from "@/types";
+import {
+  useGetBroadcastedInterviewReceivedRequests,
+  useGetBroadcastedInterviewSentRequests,
+} from "@/hooks/useBroadcastedInterviewRequests";
+import {
+  BroadcastedInterviewRequest,
+  PeerToPeerInterviewRequest,
+} from "@/types";
+import PeerToPeerInterviewRequestCard from "./PeerToPeerInterviewRequestCard";
+import BroadcastedInterviewRequestCard from "./BroadcastedInterviewRequestCard";
+
+const getQueryFn = ({
+  requestDirection,
+  requestType,
+}: {
+  requestDirection: "sent" | "received";
+  requestType: "peer-to-peer" | "broadcasted";
+}) => {
+  if (requestDirection === "sent") {
+    if (requestType === "peer-to-peer") {
+      return useGetPeerToPeerInterviewSentRequests;
+    } else {
+      return useGetBroadcastedInterviewSentRequests;
+    }
+  } else {
+    if (requestType === "peer-to-peer") {
+      return useGetPeerToPeerInterviewReceivedRequests;
+    } else {
+      return useGetBroadcastedInterviewReceivedRequests;
+    }
+  }
+};
 
 const InterviewRequestList = ({
+  requestDirection,
   requestType,
-  setSelectedInterviewRequest,
-  setIsInterviewRequestDetailsVisible,
 }: {
-  requestType: "sent" | "received";
-  setSelectedInterviewRequest: React.Dispatch<
-    React.SetStateAction<PeerToPeerInterviewRequest | null>
-  >;
-  setIsInterviewRequestDetailsVisible: React.Dispatch<
-    React.SetStateAction<boolean>
-  >;
+  requestDirection: "sent" | "received";
+  requestType: "peer-to-peer" | "broadcasted";
 }) => {
-  const queryFn =
-    requestType === "sent"
-      ? useGetPeerToPeerInterviewSentRequests
-      : useGetPeerToPeerInterviewReceivedRequests;
-
-  const { data: interviewRequests, isLoading, isError } = queryFn();
+  const {
+    data: interviewRequests,
+    isLoading,
+    isError,
+  } = getQueryFn({ requestDirection, requestType })();
 
   if (isLoading) {
     return <h1>Fetching Requests....</h1>;
@@ -39,16 +62,21 @@ const InterviewRequestList = ({
 
   return (
     <div className="grid grid-cols-4 gap-5 gap-y-8 h-full py-5">
-      {interviewRequests.map((interviewRequest) => (
-        <InterviewRequestCard
-          key={interviewRequest._id}
-          interviewRequest={interviewRequest}
-          setSelectedInterviewRequest={setSelectedInterviewRequest}
-          setIsInterviewRequestDetailsVisible={
-            setIsInterviewRequestDetailsVisible
-          }
-        />
-      ))}
+      {requestType === "peer-to-peer"
+        ? interviewRequests.map((interviewRequest) => (
+            <PeerToPeerInterviewRequestCard
+              key={interviewRequest._id}
+              interviewRequest={interviewRequest as PeerToPeerInterviewRequest}
+              requestDirection={requestDirection}
+            />
+          ))
+        : interviewRequests.map((interviewRequest) => (
+            <BroadcastedInterviewRequestCard
+              key={interviewRequest._id}
+              interviewRequest={interviewRequest as BroadcastedInterviewRequest}
+              requestDirection={requestDirection}
+            />
+          ))}
     </div>
   );
 };
