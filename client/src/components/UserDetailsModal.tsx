@@ -7,13 +7,14 @@ import { CtaType, InterviewRequest, IUser, RequestedAsType } from "@/types";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  useAcceptPeerToPeerInterview,
-  useRequestPeerToPeerInterview,
-} from "@/hooks/useInterview";
+
 import BottomSheet from "./BottomSheet";
 import Modal from "./Modal";
 import Scheduler from "./Scheduler";
+import {
+  useAcceptPeerToPeerInterview,
+  useRequestPeerToPeerInterview,
+} from "@/hooks/usePeerToPeerInterviewRequests";
 
 const UserDetailsModal = () => {
   const {

@@ -358,6 +358,21 @@ const rejectPeerToPeerInterviewRequest = asyncHandler(
       throw new Error("Interview request not found or inaccessible");
     }
 
+    if (interviewRequest.isAccepted === true) {
+      res.status(400);
+      throw new Error("Request is already accepted");
+    }
+
+    if (interviewRequest.isRejected === true) {
+      res.status(400);
+      throw new Error("Request is already rejected");
+    }
+
+    if (interviewRequest.isWithdrawn === true) {
+      res.status(400);
+      throw new Error("Request was withdrawn");
+    }
+
     if (user.id === interviewRequest.requestedBy) {
       res.status(403);
       throw new Error("You are not authorized to reject this request");
@@ -408,6 +423,21 @@ const withdrawPeerToPeerInterviewRequest = asyncHandler(
     if (!interviewRequest) {
       res.status(404);
       throw new Error("Interview request not found or inaccessible");
+    }
+
+    if (interviewRequest.isAccepted === true) {
+      res.status(400);
+      throw new Error("Request is already accepted");
+    }
+
+    if (interviewRequest.isRejected === true) {
+      res.status(400);
+      throw new Error("Request is already rejected");
+    }
+
+    if (interviewRequest.isWithdrawn === true) {
+      res.status(400);
+      throw new Error("Request was withdrawn");
     }
 
     if (user.id !== interviewRequest.requestedBy.toString()) {

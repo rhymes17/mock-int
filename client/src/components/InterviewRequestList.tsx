@@ -1,7 +1,7 @@
 import {
   useGetPeerToPeerInterviewReceivedRequests,
   useGetPeerToPeerInterviewSentRequests,
-} from "@/hooks/useInterview";
+} from "@/hooks/usePeerToPeerInterviewRequests";
 import InterviewRequestCard from "./InterviewRequestCard";
 import { InterviewRequest } from "@/types";
 

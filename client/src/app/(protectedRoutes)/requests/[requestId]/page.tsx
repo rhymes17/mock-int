@@ -4,7 +4,8 @@ import Button from "@/components/Button";
 import {
   useAcceptPeerToPeerInterview,
   useGetPeerToPeerInterviewSentRequest,
-} from "@/hooks/useInterview";
+} from "@/hooks/usePeerToPeerInterviewRequests";
+
 import { useAuth } from "@/providers/AuthProvider";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -116,6 +117,7 @@ const InterviewRequest = () => {
               });
               return (
                 <div
+                  key={date}
                   onClick={() => setSelectedSlot(slot)}
                   className={`py-3 px-4 rounded-xl ${
                     selectedSlot === slot
