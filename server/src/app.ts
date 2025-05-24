@@ -8,6 +8,8 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import skillRoutes from "./routes/skill.routes";
 import interviewRoutes from "./routes/interview.routes";
+import broadcastedInterviewRequestRoutes from "./routes/broadcastedInterviewRequest.routes";
+import peerToPeerInterviewRequestRoutes from "./routes/peerToPeerInterviewRequest.routes";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -28,6 +30,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/interview", interviewRoutes);
+app.use(
+  "/api/interview/request/broadcasted",
+  broadcastedInterviewRequestRoutes
+);
+app.use(
+  "/api/interview/request/peer-to-peer",
+  peerToPeerInterviewRequestRoutes
+);
 app.use(errorHandler);
 
 export default app;
