@@ -3,7 +3,12 @@
 import { useUserDetailsModal } from "@/providers/UserDetailsModalProvider";
 import Image from "next/image";
 import Button from "./Button";
-import { CtaType, InterviewRequest, IUser, RequestedAsType } from "@/types";
+import {
+  CtaType,
+  PeerToPeerInterviewRequest,
+  IUser,
+  RequestedAsType,
+} from "@/types";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -58,7 +63,7 @@ const UserInformation = ({
   user: IUser;
   requestedAs: RequestedAsType;
   ctaType: CtaType;
-  interviewRequest?: InterviewRequest;
+  interviewRequest?: PeerToPeerInterviewRequest;
 }) => {
   return (
     <div className="grid grid-cols-4 grid-rows-4 h-full gap-x-5 gap-y-3">
@@ -115,7 +120,7 @@ const ScheduleInterview = ({
   otherUserId: string;
   requestedAs: RequestedAsType;
   ctaType: CtaType;
-  interviewRequest?: InterviewRequest;
+  interviewRequest?: PeerToPeerInterviewRequest;
 }) => {
   if (ctaType === "accept" && !interviewRequest)
     return <h1>No interview request selected </h1>;

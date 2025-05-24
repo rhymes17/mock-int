@@ -2,14 +2,14 @@
 
 import InterviewRequestDetailsModal from "@/components/InterviewRequestDetailsModal";
 import InterviewRequestList from "@/components/InterviewRequestList";
-import { InterviewRequest } from "@/types";
+import { PeerToPeerInterviewRequest } from "@/types";
 import { useState } from "react";
 
 const InterviewRequests = () => {
   const [requestType, setRequestType] = useState<"sent" | "received">("sent");
 
   const [selectedInterviewRequest, setSelectedInterviewRequest] =
-    useState<InterviewRequest | null>(null);
+    useState<PeerToPeerInterviewRequest | null>(null);
   const [
     isInterviewRequestDetailsVisible,
     setIsInterviewRequestDetailsVisible,

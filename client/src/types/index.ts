@@ -50,7 +50,7 @@ export interface IUser {
   profile: Profile;
 }
 
-export interface InterviewRequest {
+export interface PeerToPeerInterviewRequest {
   _id: string;
   role: string;
   availability: Date[];

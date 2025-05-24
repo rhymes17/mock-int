@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { InterviewRequest, RequestedAsType } from "@/types";
+import { PeerToPeerInterviewRequest, RequestedAsType } from "@/types";
 
 export const requestPeerToPeerInterview = async ({
   interviewData,
@@ -10,7 +10,7 @@ export const requestPeerToPeerInterview = async ({
     availability: Date[];
     requestType: RequestedAsType;
   };
-}): Promise<InterviewRequest> => {
+}): Promise<PeerToPeerInterviewRequest> => {
   try {
     const { otherUserId, role, availability, requestType } = interviewData;
 
@@ -30,7 +30,7 @@ export const acceptPeerToPeerInterview = async ({
 }: {
   interviewRequestId: string;
   selectedSlot: Date;
-}): Promise<InterviewRequest> => {
+}): Promise<PeerToPeerInterviewRequest> => {
   console.log({ selectedSlot });
   try {
     const response = await api.post(
@@ -45,7 +45,7 @@ export const acceptPeerToPeerInterview = async ({
 };
 
 export const getPeerToPeerInterviewSentRequests = async (): Promise<
-  InterviewRequest[]
+  PeerToPeerInterviewRequest[]
 > => {
   try {
     const response = await api.get("/interview/request/peer-to-peer/sent");
@@ -57,7 +57,7 @@ export const getPeerToPeerInterviewSentRequests = async (): Promise<
 
 export const getPeerToPeerInterviewSentRequest = async (
   requestId: string
-): Promise<InterviewRequest> => {
+): Promise<PeerToPeerInterviewRequest> => {
   try {
     const response = await api.get(
       `/interview/request/peer-to-peer/${requestId}`
@@ -69,7 +69,7 @@ export const getPeerToPeerInterviewSentRequest = async (
 };
 
 export const getPeerToPeerInterviewReceivedRequests = async (): Promise<
-  InterviewRequest[]
+  PeerToPeerInterviewRequest[]
 > => {
   try {
     const response = await api.get("/interview/request/peer-to-peer/received");

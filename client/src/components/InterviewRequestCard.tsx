@@ -1,4 +1,4 @@
-import { InterviewRequest } from "@/types";
+import { PeerToPeerInterviewRequest } from "@/types";
 import Card from "./Card";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -6,9 +6,9 @@ import { redirect } from "next/navigation";
 const InterviewRequestCard = ({
   interviewRequest,
 }: {
-  interviewRequest: InterviewRequest;
+  interviewRequest: PeerToPeerInterviewRequest;
   setSelectedInterviewRequest: React.Dispatch<
-    React.SetStateAction<InterviewRequest | null>
+    React.SetStateAction<PeerToPeerInterviewRequest | null>
   >;
   setIsInterviewRequestDetailsVisible: React.Dispatch<
     React.SetStateAction<boolean>

@@ -1,4 +1,4 @@
-import { InterviewRequest } from "@/types";
+import { PeerToPeerInterviewRequest } from "@/types";
 import BottomSheet from "./BottomSheet";
 import Image from "next/image";
 import { useAuth } from "@/providers/AuthProvider";
@@ -9,7 +9,7 @@ const InterviewRequestDetailsModal = ({
   isInterviewRequestDetailsVisible,
   setIsInterviewRequestDetailsVisible,
 }: {
-  interviewRequest: InterviewRequest;
+  interviewRequest: PeerToPeerInterviewRequest;
   isInterviewRequestDetailsVisible: boolean;
   setIsInterviewRequestDetailsVisible: React.Dispatch<
     React.SetStateAction<boolean>

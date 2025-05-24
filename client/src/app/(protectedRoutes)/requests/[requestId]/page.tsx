@@ -11,7 +11,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const InterviewRequest = () => {
+const PeerToPeerInterviewRequest = () => {
   const { user } = useAuth();
   const { requestId } = useParams();
   const {
@@ -143,4 +143,4 @@ const InterviewRequest = () => {
   );
 };
 
-export default InterviewRequest;
+export default PeerToPeerInterviewRequest;

@@ -3,7 +3,7 @@ import {
   useGetPeerToPeerInterviewSentRequests,
 } from "@/hooks/usePeerToPeerInterviewRequests";
 import InterviewRequestCard from "./InterviewRequestCard";
-import { InterviewRequest } from "@/types";
+import { PeerToPeerInterviewRequest } from "@/types";
 
 const InterviewRequestList = ({
   requestType,
@@ -12,7 +12,7 @@ const InterviewRequestList = ({
 }: {
   requestType: "sent" | "received";
   setSelectedInterviewRequest: React.Dispatch<
-    React.SetStateAction<InterviewRequest | null>
+    React.SetStateAction<PeerToPeerInterviewRequest | null>
   >;
   setIsInterviewRequestDetailsVisible: React.Dispatch<
     React.SetStateAction<boolean>

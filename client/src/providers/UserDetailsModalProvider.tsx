@@ -1,6 +1,11 @@
 "use client";
 
-import { CtaType, InterviewRequest, IUser, RequestedAsType } from "@/types";
+import {
+  CtaType,
+  PeerToPeerInterviewRequest,
+  IUser,
+  RequestedAsType,
+} from "@/types";
 import { createContext, useContext, useState } from "react";
 
 interface IUserDetailsModalContext {
@@ -10,9 +15,9 @@ interface IUserDetailsModalContext {
   setCtaType: React.Dispatch<React.SetStateAction<CtaType>>;
   requestedAs: RequestedAsType;
   setRequestedAs: React.Dispatch<React.SetStateAction<RequestedAsType>>;
-  interviewRequest: InterviewRequest | null;
+  interviewRequest: PeerToPeerInterviewRequest | null;
   setInterviewRequest: React.Dispatch<
-    React.SetStateAction<InterviewRequest | null>
+    React.SetStateAction<PeerToPeerInterviewRequest | null>
   >;
   isModalVisible: boolean;
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,7 +38,7 @@ export const UserDetailsModalProvider = ({
     useState<RequestedAsType>("interviewee");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [interviewRequest, setInterviewRequest] =
-    useState<InterviewRequest | null>(null);
+    useState<PeerToPeerInterviewRequest | null>(null);
 
   return (
     <UserDetailsModalContext.Provider
