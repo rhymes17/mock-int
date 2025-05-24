@@ -464,7 +464,8 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
       throw new Error("No interview id found!");
     }
 
-    const { selectedSlot } = req.body;
+    let { selectedSlot } = req.body;
+    selectedSlot = new Date(selectedSlot).toISOString();
 
     if (!selectedSlot) {
       res.status(404);
@@ -485,6 +486,33 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
     if (!interviewRequest) {
       res.status(404);
       throw new Error("Interview request not found or inaccessible");
+    }
+
+    if (interviewRequest.isAccepted === true) {
+      res.status(400);
+      throw new Error("Request is already accepted");
+    }
+
+    if (interviewRequest.isRejected === true) {
+      res.status(400);
+      throw new Error("Request is already rejected");
+    }
+
+    if (interviewRequest.isWithdrawn === true) {
+      res.status(400);
+      throw new Error("Request was withdrawn");
+    }
+
+    const selectedTime = new Date(selectedSlot);
+    const now = new Date();
+
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+
+    if (selectedTime.getTime() - now.getTime() < oneDayInMs) {
+      res.status(400);
+      throw new Error(
+        "Interview must be scheduled at least 24 hours in advance"
+      );
     }
 
     if (user.id === interviewRequest.requestedBy.toString()) {

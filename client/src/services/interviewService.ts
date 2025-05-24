@@ -44,13 +44,18 @@ export const requestPeerToPeerInterview = async ({
 
 export const acceptPeerToPeerInterview = async ({
   interviewRequestId,
+  selectedSlot,
 }: {
   interviewRequestId: string;
+  selectedSlot: Date;
 }): Promise<InterviewRequest> => {
+  console.log({ selectedSlot });
   try {
     const response = await api.post(
-      `interview/request/peer-to-peer/accept/${interviewRequestId}`
+      `interview/request/peer-to-peer/accept/${interviewRequestId}`,
+      { selectedSlot }
     );
+    console.log({ response });
     return response.data.data;
   } catch (error: any) {
     throw new Error(error.response.data.message);

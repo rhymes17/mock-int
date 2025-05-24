@@ -13,7 +13,7 @@ const Button = ({
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={`cursor-pointer rounded-lg px-4 py-2 ${
+      className={`cursor-pointer rounded-lg px-4 py-2 w-fit mx-auto ${
         disabled ? "bg-black/30" : "bg-black"
       } text-white`}
     >

@@ -158,6 +158,7 @@ const ScheduleInterview = ({
       }
       acceptPeerToPeerInterviewMutation.mutate({
         interviewRequestId: interviewRequest._id,
+        selectedSlot: new Date(),
       });
     }
   };
