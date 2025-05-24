@@ -3,12 +3,27 @@ import { UserType } from "./User";
 
 export interface IBroadcastedInterviewRequest {
   role: string;
-  time: Date;
+  availability: Date[];
   interviewer: UserType;
-  interestedInterviewees: UserType[];
+  requests: { user: UserType; selectedSlot: Date }[];
   isAccepted: boolean;
   isWithdrawn: boolean;
 }
+
+const interviewRequest = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    selectedSlot: {
+      type: Date,
+      required: true,
+    },
+  },
+  { _id: false }
+);
 
 const broadcastedInterviewRequestSchema = new mongoose.Schema(
   {
@@ -16,18 +31,24 @@ const broadcastedInterviewRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    time: {
-      type: Date,
-      required: true,
-    },
+    availability: [
+      {
+        type: Date,
+        required: true,
+        validate: {
+          validator: (val: Date) => val > new Date(),
+          message: "Availability must be in the future.",
+        },
+      },
+    ],
     interviewer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    interestedInterviewees: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "User",
+    requests: {
+      type: [interviewRequest],
+      default: [],
     },
     isAccepted: {
       type: Boolean,

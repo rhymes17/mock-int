@@ -1,7 +1,4 @@
 import User, { UserType } from "../Models/User";
-import PeerToPeerInterviewRequest, {
-  IPeerToPeerInterviewRequest,
-} from "../Models/PeerToPeerInterviewRequest";
 import BroadcastedInterviewRequest, {
   IBroadcastedInterviewRequest,
 } from "../Models/BroadcastedInterviewRequest";
@@ -28,6 +25,9 @@ const getBroadcastedInterviewReceivedRequests = asyncHandler(
           interviewer: { $ne: user._id },
         },
       ],
+    }).populate({
+      path: "interviewer requests.user",
+      select: "-accessToken -refreshToken -googleId",
     });
 
     res.status(200).json({
@@ -52,6 +52,9 @@ const getBroadcastedInterviewSentRequests = asyncHandler(
 
     const interviewRequests = await BroadcastedInterviewRequest.find({
       interviewer: user._id,
+    }).populate({
+      path: "interviewer requests.user",
+      select: "-accessToken -refreshToken -googleId",
     });
 
     res.status(200).json({
@@ -83,7 +86,14 @@ const getBroadcastedInterviewRequest = asyncHandler(
 
     const interviewRequest = await BroadcastedInterviewRequest.findById(
       interviewRequestId
-    );
+    ).populate({
+      path: "interviewer requests.user",
+      select: "-accessToken -refreshToken -googleId",
+      populate: {
+        path: "profile.skills.skill",
+        model: "Skill",
+      },
+    });
 
     if (!interviewRequest) {
       res.status(404);
@@ -112,15 +122,15 @@ const requestBroadcastedInterview = asyncHandler(
 
     const {
       role,
-      time,
+      availability,
     }: {
       role: string;
-      time: Date;
+      availability: Date[];
     } = req.body;
 
-    if (new Date(time) <= new Date()) {
+    if (availability.length === 0) {
       res.status(400);
-      throw new Error("Interview time must be in the future");
+      throw new Error("No availalibity set");
     }
 
     if (!role) {
@@ -129,9 +139,9 @@ const requestBroadcastedInterview = asyncHandler(
 
     let broadcastedInterviewRequest: IBroadcastedInterviewRequest = {
       role,
-      time,
+      availability,
       interviewer: user,
-      interestedInterviewees: [],
+      requests: [],
       isAccepted: false,
       isWithdrawn: false,
     };
@@ -165,6 +175,7 @@ const applyToBroadcastedInterview = asyncHandler(
       res.status(403);
       throw new Error("No interview selected");
     }
+    const { selectedSlot } = req.body;
 
     const broadcastedInterviewDoc = await BroadcastedInterviewRequest.findById(
       broadcastedInterviewId
@@ -180,12 +191,31 @@ const applyToBroadcastedInterview = asyncHandler(
       throw new Error("Interviewer cannot apply for an interview");
     }
 
-    if (broadcastedInterviewDoc.interestedInterviewees.includes(user.id)) {
+    if (broadcastedInterviewDoc.isAccepted === true) {
+      res.status(400);
+      throw new Error("Interview Request is no longer available");
+    }
+
+    if (broadcastedInterviewDoc.isWithdrawn === true) {
+      res.status(400);
+      throw new Error("Interview Request is no longer available");
+    }
+
+    const request = {
+      user: user.id,
+      selectedSlot,
+    };
+
+    if (
+      broadcastedInterviewDoc.requests.find(
+        (request) => request.user.toString() === user._id
+      )
+    ) {
       res.status(400);
       throw new Error("Already applied to this interview");
     }
 
-    broadcastedInterviewDoc.interestedInterviewees.push(user.id);
+    broadcastedInterviewDoc.requests.push(request);
 
     await broadcastedInterviewDoc.save();
 
@@ -216,11 +246,11 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
       throw new Error("No interview id found!");
     }
 
-    const { intervieweeId } = req.body;
+    const { request } = req.body;
 
-    if (!intervieweeId) {
+    if (!request) {
       res.status(404);
-      throw new Error("Interviewee must be choosen");
+      throw new Error("No request choosen");
     }
 
     const interviewRequest = await BroadcastedInterviewRequest.findOne({
@@ -239,13 +269,23 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
       throw new Error("Interview request not found or inaccessible");
     }
 
+    if (interviewRequest.isAccepted === true) {
+      res.status(400);
+      throw new Error("Interview already accepted");
+    }
+
+    if (interviewRequest.isWithdrawn === true) {
+      res.status(400);
+      throw new Error("Interview already withdrawn");
+    }
+
     if (user.id !== interviewRequest.interviewer.toString()) {
       res.status(403);
       throw new Error("Only author can perform this operation");
     }
 
     const interviewer = await User.findById(interviewRequest.interviewer);
-    const interviewee = await User.findById(intervieweeId);
+    const interviewee = await User.findById(request.user);
 
     if (!interviewer?.refreshToken || !interviewee?.refreshToken) {
       res.status(400);
@@ -255,14 +295,14 @@ const acceptBroadcastedInterviewRequest = asyncHandler(
     const meetLink = await createGoogleMeetEvent({
       organizer: interviewer,
       summary: `Interview: ${interviewRequest.role}`,
-      interviewTime: interviewRequest.time,
+      interviewTime: request.selectedSlot,
       interviewee,
       interviewer,
     });
 
     const interview = await Interview.create({
       role: interviewRequest.role,
-      time: interviewRequest.time,
+      time: request.selectedSlot,
       interviewee,
       interviewer,
       interviewLink: meetLink,
@@ -307,6 +347,16 @@ const withdrawBroadcastedInterviewRequest = asyncHandler(
     if (!interviewRequest) {
       res.status(404);
       throw new Error("Interview request not found or inaccessible");
+    }
+
+    if (interviewRequest.isAccepted === true) {
+      res.status(400);
+      throw new Error("Interview already accepted");
+    }
+
+    if (interviewRequest.isWithdrawn === true) {
+      res.status(400);
+      throw new Error("Interview already withdrawn");
     }
 
     if (user.id !== interviewRequest.interviewer.toString()) {
