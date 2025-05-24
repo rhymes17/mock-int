@@ -12,6 +12,8 @@ import {
   useRequestPeerToPeerInterview,
 } from "@/hooks/useInterview";
 import BottomSheet from "./BottomSheet";
+import Modal from "./Modal";
+import Scheduler from "./Scheduler";
 
 const UserDetailsModal = () => {
   const {
@@ -120,11 +122,14 @@ const ScheduleInterview = ({
   const [role, setRole] = useState(
     !!interviewRequest ? interviewRequest.role : ""
   );
-  const [selectedDate, setSelectedDate] = useState<Date | null>(
-    interviewRequest ? new Date(interviewRequest.time) : new Date()
-  );
+
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const [isSchedulerOpen, setIsSchedulerOpen] = useState(false);
+
+  const [selectedTimeSlotsAsIsoString, setSelectedTimeSlotsAsIsoString] =
+    useState<Date[]>([]);
 
   const requestPeerToPeerInterviewMutation = useRequestPeerToPeerInterview();
   const acceptPeerToPeerInterviewMutation = useAcceptPeerToPeerInterview();
@@ -136,14 +141,14 @@ const ScheduleInterview = ({
 
   const handleCta = () => {
     if (ctaType === "request") {
-      if (!role || !selectedDate || !otherUserId) {
+      if (!role || selectedTimeSlotsAsIsoString.length === 0 || !otherUserId) {
         return;
       }
       requestPeerToPeerInterviewMutation.mutate({
         interviewData: {
           otherUserId,
           role,
-          time: selectedDate,
+          availability: selectedTimeSlotsAsIsoString,
           requestType: requestedAs,
         },
       });
@@ -164,7 +169,6 @@ const ScheduleInterview = ({
         setErrorMessage("");
       }, 3000);
       if (ctaType === "request") {
-        setSelectedDate(new Date());
         setRole("");
       }
     } else if (selectedMutation.isSuccess) {
@@ -173,7 +177,6 @@ const ScheduleInterview = ({
         setIsSuccess(false);
       }, 3000);
       if (ctaType === "request") {
-        setSelectedDate(new Date());
         setRole("");
       }
     }
@@ -196,10 +199,9 @@ const ScheduleInterview = ({
           />
         </div>
 
-        <DateTimePicker
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          disabled={!!interviewRequest}
+        <Button
+          title="Set Availibility"
+          handleClick={() => setIsSchedulerOpen(true)}
         />
       </div>
 
@@ -216,7 +218,7 @@ const ScheduleInterview = ({
           <Button
             disabled={
               !role ||
-              !selectedDate ||
+              selectedTimeSlotsAsIsoString.length === 0 ||
               selectedMutation.isPending ||
               !!errorMessage ||
               interviewRequest?.isAccepted ||
@@ -233,6 +235,12 @@ const ScheduleInterview = ({
           />
         )}
       </div>
+      <Modal isModalOpen={isSchedulerOpen} setIsModalOpen={setIsSchedulerOpen}>
+        <Scheduler
+          setIsSchedulerOpen={setIsSchedulerOpen}
+          setSelectedTimeSlotsAsIsoString={setSelectedTimeSlotsAsIsoString}
+        />
+      </Modal>
     </div>
   );
 };

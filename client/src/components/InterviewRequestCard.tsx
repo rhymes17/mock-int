@@ -1,11 +1,10 @@
 import { InterviewRequest } from "@/types";
 import Card from "./Card";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 const InterviewRequestCard = ({
   interviewRequest,
-  setSelectedInterviewRequest,
-  setIsInterviewRequestDetailsVisible,
 }: {
   interviewRequest: InterviewRequest;
   setSelectedInterviewRequest: React.Dispatch<
@@ -15,9 +14,7 @@ const InterviewRequestCard = ({
     React.SetStateAction<boolean>
   >;
 }) => {
-  const { role, time, interviewee, interviewer } = interviewRequest;
-
-  const interviewDateAndTime = new Date(time);
+  const { role, interviewee, interviewer } = interviewRequest;
 
   const getButtonTitle = () => {
     if (interviewRequest.isAccepted) {
@@ -35,8 +32,7 @@ const InterviewRequestCard = ({
   return (
     <Card
       handleButtonClick={() => {
-        setSelectedInterviewRequest(interviewRequest);
-        setIsInterviewRequestDetailsVisible(true);
+        redirect(`/requests/${interviewRequest._id}`);
       }}
       buttonTitle={getButtonTitle()}
       buttonDisabled={
@@ -48,8 +44,8 @@ const InterviewRequestCard = ({
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-[600]">{role}</h1>
         <div>
-          <h3>Date: {interviewDateAndTime.toDateString()}</h3>
-          <h3>Time: {interviewDateAndTime.toLocaleTimeString()}</h3>
+          {/* <h3>Date: {interviewDateAndTime.toDateString()}</h3>
+          <h3>Time: {interviewDateAndTime.toLocaleTimeString()}</h3> */}
         </div>
         <div className="flex gap-6 items-center">
           <div className="h-[2rem] w-[2rem] rounded-full">

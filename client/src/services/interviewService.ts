@@ -25,16 +25,16 @@ export const requestPeerToPeerInterview = async ({
   interviewData: {
     otherUserId: string;
     role: string;
-    time: Date;
+    availability: Date[];
     requestType: RequestedAsType;
   };
 }): Promise<InterviewRequest> => {
   try {
-    const { otherUserId, role, time, requestType } = interviewData;
+    const { otherUserId, role, availability, requestType } = interviewData;
 
     const response = await api.post(
       `/interview/request/peer-to-peer/${otherUserId}`,
-      { role, time, requestType }
+      { role, availability, requestType }
     );
     return response.data.data;
   } catch (error: any) {
@@ -62,6 +62,19 @@ export const getPeerToPeerInterviewSentRequests = async (): Promise<
 > => {
   try {
     const response = await api.get("/interview/request/peer-to-peer/sent");
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.message);
+  }
+};
+
+export const getPeerToPeerInterviewSentRequest = async (
+  requestId: string
+): Promise<InterviewRequest> => {
+  try {
+    const response = await api.get(
+      `/interview/request/peer-to-peer/${requestId}`
+    );
     return response.data.data;
   } catch (error: any) {
     throw new Error(error.response.data.message);

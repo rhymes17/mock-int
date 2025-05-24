@@ -3,7 +3,7 @@ import { UserType } from "./User";
 
 export interface IPeerToPeerInterviewRequest {
   role: string;
-  time: Date;
+  availability: Date[];
   interviewer: UserType;
   interviewee: UserType;
   requestedBy: UserType;
@@ -18,10 +18,12 @@ const peerToPeerInterviewRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    time: {
-      type: Date,
-      required: true,
-    },
+    availability: [
+      {
+        type: Date,
+        required: true,
+      },
+    ],
     interviewer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

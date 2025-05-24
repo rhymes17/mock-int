@@ -1,5 +1,4 @@
 import mongoose, { Document, Types } from "mongoose";
-import { ISkill } from "./Skill";
 
 interface MySkill {
   skill: Types.ObjectId;

@@ -1,23 +1,28 @@
-import { InterviewRequest } from "@/types";
-import BottomSheet from "./BottomSheet";
-import Image from "next/image";
-import { useAuth } from "@/providers/AuthProvider";
-import { useUserDetailsModal } from "@/providers/UserDetailsModalProvider";
+"use client";
 
-const InterviewRequestDetailsModal = ({
-  interviewRequest,
-  isInterviewRequestDetailsVisible,
-  setIsInterviewRequestDetailsVisible,
-}: {
-  interviewRequest: InterviewRequest;
-  isInterviewRequestDetailsVisible: boolean;
-  setIsInterviewRequestDetailsVisible: React.Dispatch<
-    React.SetStateAction<boolean>
-  >;
-}) => {
+import { useGetPeerToPeerInterviewSentRequest } from "@/hooks/useInterview";
+import { useAuth } from "@/providers/AuthProvider";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import React from "react";
+
+const InterviewRequest = () => {
   const { user } = useAuth();
-  const { setUser, setIsModalVisible, setInterviewRequest, setCtaType } =
-    useUserDetailsModal();
+  const { requestId } = useParams();
+  const {
+    data: interviewRequest,
+    isLoading,
+    isError,
+  } = useGetPeerToPeerInterviewSentRequest(requestId as string);
+
+  if (isError || !interviewRequest) {
+    return <div>No interview found</div>;
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   const { role, availability, interviewee, interviewer } = interviewRequest;
   // const interviewDateAndTime = new Date(time);
   console.log({ availability });
@@ -28,20 +33,8 @@ const InterviewRequestDetailsModal = ({
   const userRole =
     interviewee.email === user?.email ? "Interviewee" : "Interviewer";
 
-  const handleUserSelected = () => {
-    setUser(otherParty);
-    setIsModalVisible(true);
-    setCtaType("accept");
-    setInterviewRequest(interviewRequest);
-    setIsInterviewRequestDetailsVisible(false);
-  };
-
   return (
-    <BottomSheet
-      isBottomSheetVisible={isInterviewRequestDetailsVisible}
-      setIsBottomSheetVisible={setIsInterviewRequestDetailsVisible}
-      isModal={true}
-    >
+    <div>
       <div className="flex flex-col gap-5">
         <div className="">
           <h1 className="text-3xl font-bold">{role}</h1>
@@ -53,7 +46,7 @@ const InterviewRequestDetailsModal = ({
 
         <div className="flex flex-col items-center gap-3">
           <div
-            onClick={handleUserSelected}
+            onClick={() => {}}
             className="flex gap-2 items-center w-fit px-2 py-2 rounded-xl shadow-2xl cursor-pointer"
           >
             <div className="h-[2rem] w-[2rem] rounded-full">
@@ -73,8 +66,8 @@ const InterviewRequestDetailsModal = ({
           </h2>
         </div>
       </div>
-    </BottomSheet>
+    </div>
   );
 };
 
-export default InterviewRequestDetailsModal;
+export default InterviewRequest;

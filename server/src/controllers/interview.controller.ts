@@ -156,6 +156,13 @@ const getPeerToPeerInterviewRequest = asyncHandler(
           _id: interviewRequestId,
         },
       ],
+    }).populate({
+      path: "interviewer interviewee requestedBy",
+      select: "-accessToken -refreshToken -googleId",
+      populate: {
+        path: "profile.skills.skill",
+        model: "Skill",
+      },
     });
 
     if (!interviewRequest) {
@@ -200,11 +207,11 @@ const requestPeerToPeerInterview = asyncHandler(
     const {
       requestType,
       role,
-      time,
+      availability,
     }: {
       requestType: "interviewer" | "interviewee";
       role: string;
-      time: Date;
+      availability: Date[];
     } = req.body;
 
     if (!requestType) {
@@ -215,14 +222,14 @@ const requestPeerToPeerInterview = asyncHandler(
       throw new Error("Role must be defined!");
     }
 
-    if (new Date(time) <= new Date()) {
+    if (availability.length === 0) {
       res.status(400);
-      throw new Error("Interview time must be in the future");
+      throw new Error("No availalibity set");
     }
 
     let peerToPeerInterviewRequest: IPeerToPeerInterviewRequest = {
       role,
-      time,
+      availability,
       requestedBy: user,
       interviewer: user,
       interviewee: user,
@@ -444,7 +451,7 @@ const applyToBroadcastedInterview = asyncHandler(
 const acceptPeerToPeerInterviewRequest = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as UserType;
-    
+
     if (!user) {
       res.status(401);
       throw new Error("User not authenticated");
@@ -455,6 +462,13 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
     if (!interviewRequestId) {
       res.status(403);
       throw new Error("No interview id found!");
+    }
+
+    const { selectedSlot } = req.body;
+
+    if (!selectedSlot) {
+      res.status(404);
+      throw new Error("No slot selected");
     }
 
     const interviewRequest = await PeerToPeerInterviewRequest.findOne({
@@ -472,8 +486,6 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
       res.status(404);
       throw new Error("Interview request not found or inaccessible");
     }
-
-    console.log({id: user.id, req: interviewRequest.requestedBy})
 
     if (user.id === interviewRequest.requestedBy.toString()) {
       res.status(403);
@@ -497,14 +509,14 @@ const acceptPeerToPeerInterviewRequest = asyncHandler(
     const meetLink = await createGoogleMeetEvent({
       organizer: requester,
       summary: `Interview: ${interviewRequest.role}`,
-      interviewTime: interviewRequest.time,
+      interviewTime: selectedSlot,
       interviewee,
       interviewer,
     });
 
     const interview = await Interview.create({
       role: interviewRequest.role,
-      time: interviewRequest.time,
+      time: selectedSlot,
       interviewee,
       interviewer,
       interviewLink: meetLink,

@@ -3,6 +3,7 @@ import {
   getInterviewees,
   getInterviewers,
   getPeerToPeerInterviewReceivedRequests,
+  getPeerToPeerInterviewSentRequest,
   getPeerToPeerInterviewSentRequests,
   requestPeerToPeerInterview,
 } from "@/services/interviewService";
@@ -33,6 +34,13 @@ export const useGetPeerToPeerInterviewSentRequests = () => {
   return useQuery({
     queryKey: ["sent-peer-to-peer-requests"],
     queryFn: getPeerToPeerInterviewSentRequests,
+  });
+};
+
+export const useGetPeerToPeerInterviewSentRequest = (requestId: string) => {
+  return useQuery({
+    queryKey: ["sent-peer-to-peer-request"],
+    queryFn: () => getPeerToPeerInterviewSentRequest(requestId),
   });
 };
 

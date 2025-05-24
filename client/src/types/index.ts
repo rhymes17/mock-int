@@ -53,7 +53,7 @@ export interface IUser {
 export interface InterviewRequest {
   _id: string;
   role: string;
-  time: Date;
+  availability: Date[];
   interviewer: IUser;
   interviewee: IUser;
   requestedBy: IUser;
